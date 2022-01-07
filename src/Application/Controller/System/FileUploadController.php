@@ -24,6 +24,7 @@ class FileUploadController extends \Application\Controller\BaseController
     {
         $this->resourceService = $resourceService;
         parent::__construct($logger, $rule);
+        $this->class = self::class;
     }
 
     /**
@@ -54,13 +55,13 @@ class FileUploadController extends \Application\Controller\BaseController
      * @return Response
      * @throws JsonException
      */
-    public function getImgAccessPath(Request $request, Response $response, array $args):Response
+    public function getResourceInfo(Request $request, Response $response, array $args):Response
     {
-        $this->validatorByName($request,self::class.":getImgAccessPath");
+        $this->validatorByName($request,"getImgAccessPath");
         $queryCondition = [];
         $queryCondition['id'] = (int)($this->getParamsByName('id'));
         $queryCondition['type'] = (int)$this->getParamsByName('type');
-        $res = $this->resourceService->getFileAccessPath($queryCondition);
+        $res = $this->resourceService->getResourceInfo($queryCondition);
         return $this->respondWithJson(Result::SUCCESS($res), $response);
     }
 

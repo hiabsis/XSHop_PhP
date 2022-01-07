@@ -3,6 +3,7 @@
 namespace Application\Service;
 
 use Application\Domain\Product\Product;
+use JetBrains\PhpStorm\ArrayShape;
 
 interface ProductServiceInterface
 {
@@ -36,6 +37,7 @@ interface ProductServiceInterface
      */
     public function getProductDetail(int $productId):array;
 
+
     /**
      * User: 无畏泰坦
      * Date: 2021.12.17 13:11
@@ -67,12 +69,11 @@ interface ProductServiceInterface
      * User: 无畏泰坦
      * Date: 2021.12.22 17:21
      * Describe 查找商品信息
-     * @param $product
-     * @param int $size
-     * @param int $page
+     * @param array $queryCondition
+     * @param array $limit
      * @return array
      */
-    public function listProduct(Product $product,int $page,int $size ):array;
+    #[ArrayShape(['total' => "int", 'data' => "array"])] public function listProduct(array $queryCondition,array $limit ):array;
 
 
 

@@ -20,7 +20,7 @@ interface ResourceServiceInterface
      * @param array $queryCondition
      * @return array
      */
-    public function getFileAccessPath(array $queryCondition):array;
+    public function getResourceInfo(array $queryCondition):array;
 
 
 }

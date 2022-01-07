@@ -1,6 +1,8 @@
 <?php
 namespace Application\Domain\System;
-class Resource
+use Application\Domain\BaseDomain;
+
+class Resource extends BaseDomain
 {
     public $id;
     public $userId;

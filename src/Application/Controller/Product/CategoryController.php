@@ -28,6 +28,7 @@ class CategoryController extends BaseController
 
         parent::__construct($logger, $rule);
         $this->categoryService = $categoryService;
+        $this->class = self::class;
     }
 
     /**
@@ -40,7 +41,7 @@ class CategoryController extends BaseController
      */
     public function saveCategory(Request $request, Response $response, $args): Response
     {
-        $this->validatorByName($request,self::class.":saveCategory");
+        $this->validatorByName($request,"saveCategory");
         $this->validator($request);
         $category = $this->getParamsByClazz(Category::class);
         $resources = $this->getParamsByNameAndClazz('resources', ProductRelatedResource::class);
@@ -54,7 +55,7 @@ class CategoryController extends BaseController
      */
     public function removeCategory(Request $request, Response $response): Response
     {
-        $this->validatorByName($request,self::class.":removeCategory");
+        $this->validatorByName($request,"removeCategory");
         $id  = $this->getParamsByName('id');
         $res =  $this->categoryService->deleteCategoryById($id);
         return  $this->respondWithJson(Result::SUCCESS($res),$response);
@@ -74,7 +75,7 @@ class CategoryController extends BaseController
     public function listCategory(Request $request, Response $response, $args)
     {
 
-        $this->validatorByName($request,self::class.':listCategory');
+        $this->validatorByName($request,'listCategory');
 
         $queryCondition = [];
         if (!empty( $this->getParamsByName('parentId'))){
@@ -99,7 +100,7 @@ class CategoryController extends BaseController
      */
     public function treeCategory(Request $request, Response $response, $args):Response
     {
-        $this->validatorByName($request,self::class.":treeCategory");
+        $this->validatorByName($request,"treeCategory");
         $queryCondition = [];
         if (!empty( $this->getParamsByName('parentId'))){
             $queryCondition['parentId'] = $this->getParamsByName('parentId');
@@ -129,7 +130,7 @@ class CategoryController extends BaseController
      */
     public function putCategory(Request $request, Response $response, $args):Response
     {
-        $this->validatorByName($request,self::class.":putCategory");
+        $this->validatorByName($request,"putCategory");
         $this->validator($request);
         $category = $this->getParamsByClazz(Category::class);
         $resources = $this->getParamsByNameAndClazz('resources', ProductRelatedResource::class);

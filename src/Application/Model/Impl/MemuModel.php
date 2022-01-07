@@ -1,67 +1,66 @@
 <?php
 /**
  * User: 无畏泰坦
- * Date: 2021.12.15 17:11
+ * Date: 2022.01.05 16:34
  * Describe
  */
 
 namespace Application\Model\Impl;
 
-use Application\Domain\System\User;
 use Application\Exception\ModelValidatorParamsException;
-use Application\Model\UserModelInterfaceInterface;
+use Application\Model\MenuModelInterface;
 use Medoo\Medoo;
 use PDO;
 
 /**
- * Created on 2021.12.15 17:11
+ * Created on 2022.01.05 16:34
  * Created by 无畏泰坦
  * Describe
  */
-class UserModel extends BaseModel implements UserModelInterfaceInterface
+class MemuModel extends BaseModel implements MenuModelInterface
 {
+
     public function __construct(PDO $conn, Medoo $medoo)
     {
         parent::__construct($conn, $medoo);
-        $this->tableName = 'sys_admin_user';
+        $this->tableName = 'sys_admin_menu';
     }
 
     /**
      * User: 无畏泰坦
-     * Date: 2022.01.07 11:18
-     * Describe 查询用户
+     * Date: 2022.01.05 16:43
+     * Describe
      * @param array $select
      * @param array $queryCondition
      * @param array $limit
      * @param bool $isAnd
      * @return array
      */
-    public function findUser(array $select = [], array $queryCondition = [], array $limit = [], bool $isAnd = true): array
+    public function findMenu(array $select = [],array $queryCondition = [],array $limit = [],bool $isAnd = true): array
     {
         if (empty($select)) {
             $select = '*';
         }
         $where = [];
-        if (!$isAnd) {
+        if (!$isAnd){
             $where['OR'] = $this->buildQueryCondition($queryCondition);
-        } else {
-            $where = $this->buildQueryCondition($queryCondition);
+        }else{
+            $where= $this->buildQueryCondition($queryCondition);
         }
-        if (!empty($limit)) {
+        if (!empty($limit)){
             $where['LIMIT'] = $limit;
         }
-        return $this->medoo->select($this->tableName, $select, $where);
-
+        return $this->medoo->select($this->tableName, $select,$where);
     }
 
     /**
      * User: 无畏泰坦
-     * Date: 2022.01.07 11:16
-     * Describe  批量删除
+     * Date: 2022.01.05 17:01
+     * Describe 批量删除
      * @param array $ids
      * @return bool
      */
-    public function removeUserByIds(array $ids = []): bool
+    public function removeMenuByIds(array $ids = []): bool
     {
         if (empty($ids)) {
             return true;
@@ -79,10 +78,10 @@ class UserModel extends BaseModel implements UserModelInterfaceInterface
      * Date: 2022.01.05 17:01
      * Describe 更新数据
      * @param array $updateDate
-     * @param int $userId
+     * @param int $menuId
      * @return bool
      */
-    public function updateMenuById(array $updateDate = [], int $userId = 0): bool
+    public function updateMenuById(array $updateDate = [], int $menuId = 0): bool
     {
         if (array_key_exists('id', $updateDate)) {
             throw  new ModelValidatorParamsException("非法参数 id,更新数据不能包含Id");
@@ -90,7 +89,7 @@ class UserModel extends BaseModel implements UserModelInterfaceInterface
         if (empty($updateDate)) {
             return false;
         }
-        $where['id'] = $userId;
+        $where['id'] = $menuId;
         $stmt = $this->medoo->update($this->tableName, $updateDate, $where);
         if ($stmt === null) {
             return false;
@@ -100,63 +99,46 @@ class UserModel extends BaseModel implements UserModelInterfaceInterface
 
     /**
      * User: 无畏泰坦
-     * Date: 2022.01.07 11:18
-     * Describe 保存用户
-     * @param array $saveData
-     * @return bool
-     */
-    public function saveUser(array $saveData): bool
-    {
-        $this->medoo->insert($this->tableName, $saveData);
-        return $this->medoo->id();
-    }
-
-    /**
-     * User: 无畏泰坦
-     * Date: 2022.01.07 11:01
-     * Describe 统计数据
-     * @param array $query
+     * Date: 2022.01.05 17:35
+     * Describe 保存菜单
+     * @param $saveData
      * @return int
      */
-    public function countUser(array $query): int
+    public function saveMenu($saveData): int
     {
-        $where = $this->buildQueryCondition($query);
-        return $this->medoo->count($this->tableName, $where);
+        $this->medoo->insert($this->tableName, $saveData);
+        return  $this->medoo->id();
     }
 
     /**
      * User: 无畏泰坦
-     * Date: 2022.01.07 10:59
+     * Date: 2022.01.05 17:36
+     * Describe 统计数据
+     * @param array $queryCondition
+     * @return int
+     */
+    public function countMenu(array $queryCondition):int
+    {
+        $where = $this->buildQueryCondition($queryCondition);
+        return $this->medoo->count($this->tableName,$where);
+    }
+
+    /**
+     * User: 无畏泰坦
+     * Date: 2022.01.05 17:28
      * Describe 是否存在
-     * @param string $username 用户名
+     * @param string $name
      * @return bool
      */
-    public function hasUser(string $username = ''): bool
+    public function hasMenu(string $name = ''):bool
     {
         $where = [];
-        if (empty($username)) {
-            return false;
+        if (empty($name)){
+            return  false;
         }
-        $where['username'] = $username;
-        return $this->medoo->has($this->tableName, $where);
+        $where['name'] = $name;
+        return $this->medoo->has($this->tableName,$where);
     }
-
-    /**
-     * User: 无畏泰坦
-     * Date: 2022.01.07 11:36
-     * Describe 获取单个用户
-     * @param array $query
-     * @param array $select
-     * @return array
-     */
-    public function getUser(array $query,array $select = []): array
-    {
-        if (empty($select)){
-            $select = '*';
-        }
-       return  $this->medoo->get($this->tableName,$select,$query);
-    }
-
 
     /**
      * User: 无畏泰坦
@@ -168,17 +150,18 @@ class UserModel extends BaseModel implements UserModelInterfaceInterface
     protected function buildQueryCondition(array $queryCondition): array
     {
         $where = [];
-        if (empty($queryCondition)) {
+        if (empty($queryCondition)){
             return [];
         }
         foreach ($queryCondition as $filed => $condition) {
             if (!empty($condition)) {
-                switch ($filed) {
-                    case 'id':
-                    case 'username':
-                    case 'password':
-                    case 'salt':
-                        $where[$filed] = $condition;
+                switch ($filed)
+                {
+                    case 'name_zh':
+                    case 'path':
+                    case 'name':
+                    case 'component':
+                        $where[$filed.'[~]'] = $condition;
                 }
             } else {
                 throw  new ModelValidatorParamsException("查询条件为空");
@@ -186,4 +169,5 @@ class UserModel extends BaseModel implements UserModelInterfaceInterface
         }
         return $where;
     }
+
 }

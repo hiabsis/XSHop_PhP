@@ -353,9 +353,14 @@ abstract class BaseModel
         return $query->execute($condition['binds']);
     }
 
-    protected function buildQueryCondition(array $queryCondition, array $where): array
+    protected function buildQueryCondition(array $queryCondition): array
     {
         return  [];
     }
+
+    protected function updateByMedoo(array $updateArr,array $where){
+
+    }
+
 
 }

@@ -5,6 +5,8 @@
  * Describe 初始化参数
  */
 return function (\Psr\Container\ContainerInterface $c) {
+    ini_set("display_errors", 0);
+    error_reporting(E_ALL ^ E_WARNING);
     $settings = $c->get(\Application\Domain\Settings\SettingsInterface::class);
     $classMapperSettings = $settings->get('classMapper');
     \Application\Helper\ClassHelper::setMapper($classMapperSettings);

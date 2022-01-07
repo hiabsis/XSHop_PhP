@@ -20,19 +20,26 @@ interface CategoryModelInterfaceInterface extends BaseModelInterface
      */
     public function countCategory(array $queryCondition):int;
 
-
-
     /**
      * User: 无畏泰坦
      * Date: 2021.12.16 10:47
      * Describe 分页查询商品分类
-     * @param Category $category
-     * @param $page
-     * @param $size
+     * @param array $queryCondition
+     * @param array $select
+     * @param array $limit
      * @return array
      */
-    public function listCategory(array $queryCondition = [],array $select = []): array;
+    public function listCategory(array $queryCondition = [],array $select = [],array $limit=[]): array;
 
+    /**
+     * User: 无畏泰坦
+     * Date: 2022.01.05 11:03
+     * Describe
+     * @param array $queryCondition
+     * @param array $select
+     * @return array
+     */
+    public function getCategory(array $queryCondition = [],array $select = []):array;
     /**
      * User: 无畏泰坦
      * Date: 2021.12.16 13:25
@@ -50,6 +57,7 @@ interface CategoryModelInterfaceInterface extends BaseModelInterface
      * @return bool
      */
     public function removeCategoryByIds(array $ids):bool;
+
     public function updateProductById(Category $category):bool;
 
     /**
@@ -70,6 +78,7 @@ interface CategoryModelInterfaceInterface extends BaseModelInterface
      * @return Category
      */
     public function getCategoryById(int $id):Category;
+
     public function getCategoryAllByParentId(int $parentId):array;
 
 }

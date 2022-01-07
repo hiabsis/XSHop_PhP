@@ -31,15 +31,18 @@ class ResourceService implements ResourceServiceInterface
     }
 
 
-    public function getFileAccessPath(array $queryCondition): array
+    public function getResourceInfo(array $queryCondition): array
     {
-      $accessPaths = [];
+        $res = [];
         $resources = $this->resourceModel->findProductResourceByProductIdAndType($queryCondition['id'], $queryCondition['type']);
         /*** @var $resource Resource */
         foreach ($resources as $resource){
-            $accessPaths[] = UploadHelper::getFileAccessPath($resource->url);
+            $temp['fileAccessPath'] = UploadHelper::getFileAccessPath($resource->url);
+            $temp['resourceId'] =  $resource->id;
+            $temp['resourceType'] =  $queryCondition['type'];
+            $res[] = $temp;
         }
-        return $accessPaths;
+        return $res;
     }
 
 }

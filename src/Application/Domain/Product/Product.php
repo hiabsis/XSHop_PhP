@@ -2,10 +2,12 @@
 
 namespace  Application\Domain\Product;
 
+use Application\Domain\BaseDomain;
+
 /**
  * 商品信息
  */
-class Product
+class Product extends BaseDomain
 {
     public  $id ;
     // 商家编号

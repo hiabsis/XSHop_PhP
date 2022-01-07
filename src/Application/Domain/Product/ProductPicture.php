@@ -2,10 +2,12 @@
 
 namespace  Application\Domain\Product;
 
+use Application\Domain\BaseDomain;
+
 /**
  * 商品图片信息
  */
-class ProductPicture
+class ProductPicture extends BaseDomain
 {
     public   $id;
     // 商品_id

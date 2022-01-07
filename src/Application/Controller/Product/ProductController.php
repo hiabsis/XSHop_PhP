@@ -35,6 +35,7 @@ class ProductController extends BaseController
     {
         parent::__construct($logger, $rule);
         $this->productService = $productService;
+        $this->class = self::class;
     }
 
     /**
@@ -47,7 +48,7 @@ class ProductController extends BaseController
      */
     public function removeProduct(Request $request, Response $response, array $args):Response
     {
-        $this->validatorByName($request, self::class . ':removeProduct');
+        $this->validatorByName($request, 'removeProduct');
         $id = $this->getParamsByName('id');
         $this->productService->removeProductById($id);
         return $this->respondWithJson(Result::SUCCESS(), $response);
@@ -65,14 +66,14 @@ class ProductController extends BaseController
      */
     public function putProduct(Request $request, Response $response, array $args):Response
     {
-        $this->validatorByName($request, self::class . ':putProduct');
+        $this->validatorByName($request, 'putProduct');
         $this->validator($request);
         // 获取参数
         $product = $this->getParamsByClazz(Product::class);
-        $resources = $this->getParamsByNameAndClazz('resources', ProductRelatedResource::class);
-        $productInfo = $this->getParamsByNameAndClazz('productInfo', ProductInfo::class);
+        $resources = $this->getParamsByNameAndClazz('resources', ProductRelatedResource::class)??[];
+        $productInfo = $this->getParamsByNameAndClazz('productInfo', ProductInfo::class)??[];
         // 保存商品
-        $res = $this->productService->updateProductDetail($product, $resources, $productInfo);
+        $this->productService->updateProductDetail($product, $resources, $productInfo);
         return $this->respondWithJson(Result::SUCCESS(), $response);
     }
 
@@ -90,7 +91,7 @@ class ProductController extends BaseController
     public function detailProduct(Request $request, Response $response, array $args):Response
     {
         //参数校验
-        $this->validatorByName($request, self::class . ':detailProduct');
+        $this->validatorByName($request, 'detailProduct');
         // 获取参数
         $id = $this->getParamsByName('id');
         // 商品详情
@@ -113,7 +114,7 @@ class ProductController extends BaseController
     {
 
         // 预设校验
-        $this->validatorByName($request, self::class . ':saveProduct');
+        $this->validatorByName($request, 'saveProduct');
         // 自定义校验
         $this->validator($request);
         // 获取参数
@@ -130,7 +131,7 @@ class ProductController extends BaseController
      */
     public function newestProduct($request, $response, $args)
     {
-        $this->validatorByName($request, self::class . ':newestProduct');
+        $this->validatorByName($request, 'newestProduct');
     }
 
     /**
@@ -142,7 +143,7 @@ class ProductController extends BaseController
      */
     public function hotProduct($request, $response, $args)
     {
-        $this->validatorByName($request, self::class . ':hotProduct');
+        $this->validatorByName($request, 'hotProduct');
     }
 
     protected function validator(Request $request, array $rules = null)
@@ -160,9 +161,13 @@ class ProductController extends BaseController
         }
 
         $productInfo = $this->getParamsByName('productInfo');
-        foreach ($productInfo as $item) {
-            ValidatorHelper::validator($item, ValidatorHelper::getRules(ProductInfo::class));
+        if (!empty($productInfo)){
+            foreach ($productInfo as $item) {
+                ValidatorHelper::validator($item, ValidatorHelper::getRules(ProductInfo::class));
+            }
         }
+
+
     }
 
     /**
@@ -196,11 +201,18 @@ class ProductController extends BaseController
     public function listProduct(Request $request, Response $response, array $args):Response
     {
         // 预设校验
-        $this->validatorByName($request, self::class . ':listProduct');
-        $product = $this->getParamsByClazz(Product::class);
-        $page = $this->getParamsByName('page');
-        $size = $this->getParamsByName('size');
-        $res = $this->productService->listProduct($product,$page,$size);
+        $this->validatorByName($request, 'listProduct');
+        $queryCondition = [];
+        $limit = [];
+        if (!empty( $this->getParamsByName('productName'))){
+            $queryCondition['parentId'] = $this->getParamsByName('productName');
+        }
+        if (!empty( $this->getParamsByName('productStatus'))){
+            $queryCondition['categoryName'] = $this->getParamsByName('productStatus');
+        }
+        $limit['page'] = $this->getParamsByName('page')??1;
+        $limit['size'] = $this->getParamsByName('size')??10;
+        $res = $this->productService->listProduct($queryCondition,$limit);
         return $this->respondWithJson(Result::SUCCESS($res), $response);
     }
 

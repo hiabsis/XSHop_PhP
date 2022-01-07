@@ -38,6 +38,7 @@ class HomeController extends BaseController
     {
         parent::__construct($logger, $rule);
         $this->productService = $productService;
+        $this->class = self::class;
     }
 
     /**

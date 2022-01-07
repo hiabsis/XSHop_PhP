@@ -67,6 +67,9 @@ return function (ContainerBuilder $containerBuilder) {
                 'charset' => 'utf8mb4',
                 'collation' => 'utf8mb4_general_ci',
                 'port' => 3306,
+                'option' => [
+                    PDO::ATTR_EMULATE_PREPARES => false
+                ]
             ]);
         }
     ]);

@@ -19,10 +19,8 @@ interface ProductModelInterfaceInterFace extends BaseModelInterface
      * User: 无畏泰坦
      * Date: 2021.12.21 16:01
      * Describe
-     * @param Product $product
-     * @return array  Product 集合
      */
-    public function listProduct(Product $product,int $page,int $size):array;
+    public function findProduct(array $queryCondition,array $select,array $limit):array;
 
     /**
      * User: 无畏泰坦

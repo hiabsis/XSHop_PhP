@@ -7,12 +7,14 @@
 
 namespace Application\Domain\System;
 
+use Application\Domain\BaseDomain;
+
 /**
  * Created on 2021.12.15 16:29
  * Created by 无畏泰坦
  * Describe
  */
-class User
+class User extends BaseDomain
 {
     public $id;
     public $username;

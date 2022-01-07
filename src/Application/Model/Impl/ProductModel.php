@@ -40,37 +40,25 @@ class ProductModel extends BaseModel implements ProductModelInterfaceInterFace
     {
         $where = [];
         if (!empty($queryCondition)){
-            $where = $this->buildQueryCondition($queryCondition, $where);
+            $where = $this->buildQueryCondition($queryCondition);
         }
-        return $this->medoo->count($this->tableName,$where);
         return $this->medoo->count($this->tableName,$where);
     }
 
-    public function listProduct(Product $product, int $page = 1, int $size = 10): array
+    public function findProduct(array $queryCondition, array $select = [],array $limit = [0,10]): array
     {
+
+
+        // 查询条件
         $where = [];
-        $binds = [];
-        foreach ($product as $k => $v) {
-            if (!empty(trim($v))) {
-                $key = $this->toUnderScore($k);
-                switch ($this->toUnderScore($k)) {
-                    case 'desc':
-                    case 'name':
-                        $keywords = sprintf('%%%s%%', $v);
-                        $where[] = " `$key` LIKE  ?  ";
-                        $binds[] = $keywords;
-                        break;
-                    case 'id':
-                    case 'number':
-                    case 'status':
-                    case 'user_id':
-                    case 'category_id':
-                        $where[] = " `$key` = ? ";
-                        $binds[] = $v;
-                }
-            }
+        if (empty($select)){
+            $select = "*";
         }
-        return $this->findByCondition(where:$where,binds: $binds,page: $page,size: $size,clazz: Product::class);
+        if (!empty($queryCondition)){
+            $where = $this->buildQueryCondition($queryCondition);
+        }
+        $where['LIMIT'] = $limit;
+        return $this->medoo->select($this->tableName, $select,$where);
     }
 
     public function removeProductByIds(array $ids): bool
@@ -109,8 +97,9 @@ class ProductModel extends BaseModel implements ProductModelInterfaceInterFace
      * @param array $where
      * @return array
      */
-    protected function buildQueryCondition(array $queryCondition, array $where): array
+    protected function buildQueryCondition(array $queryCondition): array
     {
+        $where = [];
         if (empty($queryCondition)){
             return [];
         }

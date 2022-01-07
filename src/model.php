@@ -10,6 +10,7 @@ return function (\DI\ContainerBuilder $containerBuilder) {
         \Application\Model\ProductInfoModelInterFaceInterface::class => \DI\autowire(\Application\Model\Impl\ProductInfoModel::class),
         \Application\Model\ResourceModelInterfaceInterface::class => \DI\autowire(\Application\Model\Impl\ResourceModel::class),
         \Application\Model\ProductRelatedResourceModelInterface::class =>  \DI\autowire(\Application\Model\Impl\ProductRelatedResourceModel::class),
-        \Application\Model\UserModelInterfaceInterface::class => \DI\autowire(\Application\Model\Impl\UserModel::class)
+        \Application\Model\UserModelInterfaceInterface::class => \DI\autowire(\Application\Model\Impl\UserModel::class),
+        \Application\Model\MenuModelInterface::class => \DI\autowire(\Application\Model\Impl\MemuModel::class)
     ]);
 };

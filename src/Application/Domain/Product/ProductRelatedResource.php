@@ -2,7 +2,9 @@
 
 namespace Application\Domain\Product;
 
-class ProductRelatedResource
+use Application\Domain\BaseDomain;
+
+class ProductRelatedResource extends BaseDomain
 {
     public $id ;
     public $productId;

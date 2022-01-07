@@ -11,7 +11,6 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif)$/', $_SERVER["REQUEST_URI"])){
 
 require __DIR__ . '/../vendor/autoload.php';
 
-
 $containerBuilder = new \DI\ContainerBuilder();
 $setting = require __DIR__ . '/../src/setting.php';
 $setting($containerBuilder);

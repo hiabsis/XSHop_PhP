@@ -21,6 +21,7 @@ use Application\Model\ProductRelatedResourceModelInterface;
 
 use Application\Model\ResourceModelInterfaceInterface;
 use Exception;
+use JetBrains\PhpStorm\ArrayShape;
 
 class ProductService implements \Application\Service\ProductServiceInterface
 {
@@ -62,7 +63,7 @@ class ProductService implements \Application\Service\ProductServiceInterface
     /**
      * @throws Exception
      */
-    public function updateProductDetail(Product $product, array $resources, array $productInfo): bool
+    public function updateProductDetail(Product $product, array $resources = [], array $productInfo = []): bool
     {
         // 开启事务
         $this->productModel->startTransactional();
@@ -70,9 +71,12 @@ class ProductService implements \Application\Service\ProductServiceInterface
             // 更新商品信息
             $this->productModel->updateProduct($product);
             // 更新商品的规格信息
-            foreach ($productInfo as $info) {
-                $this->productInfoModel->updateProductInfo($info);
+            if(!empty($productInfo)){
+                foreach ($productInfo as $info) {
+                    $this->productInfoModel->updateProductInfo($info);
+                }
             }
+
             // 事务提交
             $this->productModel->commit();
 
@@ -147,13 +151,16 @@ class ProductService implements \Application\Service\ProductServiceInterface
         // 获取商品图片 访问路径
         $resources =  $this->getImageAccessPath($product);
         // 属性转换
+        /**
+         * @var $product array
+         */
         $product = ClassHelper::newArrayByObject($product);
         $category = ClassHelper::newArrayByObject($category);
         $productInfo = ClassHelper::newArrayByObjectArr($productInfo);
         // 数据合并
-        $product['categoryName'] = $category['categoryName'];
+        $product['category_name'] = $category['categoryName'];
         $product['url'] = $resources;
-        $product['productInfo'] = $productInfo;
+        $product['info'] = $productInfo;
         $this->recordProductClick($productId);
         return $product;
     }
@@ -290,35 +297,48 @@ class ProductService implements \Application\Service\ProductServiceInterface
     }
 
     /**
-
-
-
-
-    /**
+     *
+     *
+     *
+     *
+     * /**
      * User: 无畏泰坦
      * Date: 2021.12.22 17:35
      * Describe 查询商品
-     * @param Product $product
-     * @param int $page
-     * @param int $size
+     * @param array $queryCondition
+     * @param array $limit
      * @return array
      */
-    public function listProduct(Product $product, int $page, int $size): array
+    #[ArrayShape(['total' => "int", 'data' => "array"])] public function listProduct(array $queryCondition,array $limit=[0,10]): array
     {
         $res = [];
         // 查询总数
-        $total = $this->productModel->countProduct($product);
+        $total = $this->productModel->countProduct($queryCondition);
         // 查询数据
-        $products  = $this->productModel->listProduct($product,$page,$size);
-
-        $products =  ClassHelper::newArrayByObjectArr($products);
-        foreach ($products as $item){
-            $item['imgUrl'] =$this->getProductShowImgAccessPath($item['productId']);
+        $products  = $this->productModel->findProduct(queryCondition:$queryCondition,select: ['id','name','category_id','price','number','status'],limit: $limit);
+        foreach ($products as &$item){
+            $item['file_path'] =$this->getProductShowImgAccessPath($item['id']);
+            $item['category_name'] = $this->getProductCategoryName($item['category_id']);
         }
         // 获取商品分类
         return ['total' => $total,'data' => $products];
     }
 
+    /**
+     * User: 无畏泰坦
+     * Date: 2022.01. 05 11:22
+     * Describe 获取商品分类名称
+     * @param int $categoryId
+     * @return string
+     */
+    private function getProductCategoryName(int $categoryId):string
+    {
+        $category = $this->categoryModel->getCategory(queryCondition: ['id'=>$categoryId],select: ['name']);
+        if (empty($category)){
+            return  '#';
+        }
+        return $category[0]['name'];
+    }
     /**
      * User: 无畏泰坦
      * Date: 2021.12.22 17:38
@@ -331,7 +351,7 @@ class ProductService implements \Application\Service\ProductServiceInterface
        if (empty($resource)){
            return  "#";
        }else{
-           return $resource[0]->url;
+           return UploadHelper::getFileAccessPath($resource[0]->url);
        }
     }
 

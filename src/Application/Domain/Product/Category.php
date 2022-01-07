@@ -1,10 +1,12 @@
 <?php
 
 namespace Application\Domain\Product;
+use Application\Domain\BaseDomain;
+
 /**
  * 商品分类
  */
-class Category
+class Category extends BaseDomain
 {
     // ID
     public   $id;

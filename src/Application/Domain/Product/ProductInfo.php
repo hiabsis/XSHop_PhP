@@ -2,7 +2,9 @@
 
 namespace  Application\Domain\Product;
 
-class ProductInfo
+use Application\Domain\BaseDomain;
+
+class ProductInfo extends BaseDomain
 {
     public $id;
     public $productId;

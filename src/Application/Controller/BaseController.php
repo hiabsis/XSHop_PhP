@@ -24,6 +24,7 @@ abstract class BaseController
     protected  $rules;
     protected  $logger;
     protected $params;
+    protected $class;
     public function __construct(LoggerInterface $logger,ValidatorRuleInterface $rule)
     {
         $this->logger = $logger;
@@ -38,7 +39,7 @@ abstract class BaseController
      * @return Response
      * @throws JsonException
      */
-    protected function respondWithJson(array $result, Response  $response): Response
+    protected function respondWithJson(array $result = null, Response  $response = null): Response
     {
         $result['status']  = 200;
         $payload = json_encode($result, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
@@ -58,7 +59,7 @@ abstract class BaseController
      */
     protected function validatorByName(Request $request,string $name){
         $data = [];
-
+        $name = $this->class.":".$name;
         if (!empty($request->getUploadedFiles()) ){
             $data = array_merge($data,$request->getUploadedFiles()) ;
         }
@@ -93,7 +94,7 @@ abstract class BaseController
     }
 
     protected function getParamsByNameAndClazz($name,$clazz){
-        if (is_array($this->params[$name])){
+        if (array_key_exists($name,$this->params) && is_array($this->params[$name])){
             return ClassHelper::newInstanceArray($this->params[$name],$clazz);
         }
     }

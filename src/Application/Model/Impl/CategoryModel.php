@@ -30,14 +30,12 @@ class CategoryModel extends BaseModel implements \Application\Model\CategoryMode
     {
        $where = [];
         if (!empty($queryCondition)){
-            $where = $this->buildQueryCondition($queryCondition, $where);
+            $where = $this->buildQueryCondition($queryCondition);
         }
         return $this->medoo->count($this->tableName,$where);
     }
 
-
-
-    public function listCategory(array $queryCondition = [],array $select = []):array
+    public function getCategory(array $queryCondition = [], array $select = []): array
     {
         // 查询条件
         $where = [];
@@ -45,7 +43,22 @@ class CategoryModel extends BaseModel implements \Application\Model\CategoryMode
             $select = "*";
         }
         if (!empty($queryCondition)){
-            $where = $this->buildQueryCondition($queryCondition, $where);
+            $where = $this->buildQueryCondition($queryCondition);
+        }
+        $where['LIMIT'] = [0,1];
+        return $this->medoo->select($this->tableName, $select,$where);
+
+    }
+
+    public function listCategory(array $queryCondition = [],array $select = [],array $limit = []):array
+    {
+        // 查询条件
+        $where = [];
+        if (empty($select)){
+            $select = "*";
+        }
+        if (!empty($queryCondition)){
+            $where = $this->buildQueryCondition($queryCondition);
         }
         $categories =$this->medoo->select($this->tableName, $select,$where);
 
@@ -117,18 +130,19 @@ class CategoryModel extends BaseModel implements \Application\Model\CategoryMode
      * @param array $where
      * @return array
      */
-    protected function buildQueryCondition(array $queryCondition, array $where): array
+    protected function buildQueryCondition(array $queryCondition): array
     {
+        $where = [];
         if (empty($queryCondition)){
             return [];
         }
         foreach ($queryCondition as $filed => $condition) {
             if (!empty($condition)) {
-                if ($filed === 'categoryId') {
+                if ($filed === 'id') {
                     $where['id'] = (string)$condition;
-                } else if ($filed === 'categoryName') {
+                } else if ($filed === 'category_id') {
                     $where['name[~]'] = $condition;
-                } else if ($filed === 'parentId') {
+                } else if ($filed === 'parent_id') {
                     $where['parent_id'] = $condition;
                 } else if ($filed === 'status') {
                     $where['status'] = $condition;
