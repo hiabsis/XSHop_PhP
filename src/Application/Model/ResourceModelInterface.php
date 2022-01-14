@@ -6,7 +6,7 @@ namespace Application\Model;
 
 use Application\Domain\System\Resource;
 
-interface ResourceModelInterfaceInterface extends BaseModelInterface
+interface ResourceModelInterface extends BaseModelInterface
 {
 
     /**

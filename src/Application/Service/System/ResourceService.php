@@ -5,17 +5,17 @@ namespace Application\Service\System;
 use Application\Constant\SystemConstants;
 use Application\Domain\System\Resource;
 use Application\Helper\UploadHelper;
-use \Application\Model\ResourceModelInterfaceInterface;
+use \Application\Model\ResourceModelInterface;
 use \Application\Service\ResourceServiceInterface;
 
 class ResourceService implements ResourceServiceInterface
 {
     /**
-     * @var ResourceModelInterfaceInterface
+     * @var ResourceModelInterface
      */
     private $resourceModel;
 
-    public function __construct(ResourceModelInterfaceInterface $resourceModel)
+    public function __construct(ResourceModelInterface $resourceModel)
     {
         $this->resourceModel = $resourceModel;
     }

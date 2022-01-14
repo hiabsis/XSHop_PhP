@@ -6,11 +6,11 @@ namespace Application\Model\Impl;
 use Application\Domain\System\Resource;
 use Application\Exception\ModelException;
 use Application\Exception\ModelValidatorParamsException;
-use Application\Model\ResourceModelInterfaceInterface;
+use Application\Model\ResourceModelInterface;
 use Medoo\Medoo;
 use PDO;
 
-class ResourceModel extends BaseModel implements ResourceModelInterfaceInterface
+class ResourceModel extends BaseModel implements ResourceModelInterface
 {
 
     public function __construct(PDO $conn, Medoo $medoo)

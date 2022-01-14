@@ -143,7 +143,7 @@ class MenuController extends BaseController
             $menu['component'] = $this->getParamsByName('component');
         }
         if ($this->getParamsByName('parent_id')!== null){
-            $menu[''] = $this->getParamsByName('parent_id');
+            $menu['parent_id'] = $this->getParamsByName('parent_id');
         }
         if ($this->getParamsByName('name_zh')!== null){
             $menu['name_zh'] = $this->getParamsByName('name_zh');
@@ -151,6 +151,10 @@ class MenuController extends BaseController
 
         return $menu;
     }
+    /**
+     * 获取当前用户的菜单
+     */
+
     /**
      * User: 无畏泰坦
      * Date: 2022.01.06 11:04
@@ -168,4 +172,8 @@ class MenuController extends BaseController
         }
         return $menu;
     }
+
+
+
+
 }

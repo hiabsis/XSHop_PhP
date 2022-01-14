@@ -39,7 +39,7 @@ abstract class BaseService
     }
 
 
-    protected function builderTreeResult(array $arr,array $query,int $rootId = -1,string $label= 'name'): TreeVO
+    protected function builderTreeResult(array $arr,int $page=0,int $size =0,int $rootId = -1,string $label= 'name'): TreeVO
     {
         $root = new TreeVO();
         $map = [];
@@ -57,9 +57,9 @@ abstract class BaseService
         $root->id = $rootId;
         $root->label = "根目录";
         $this->buildTree($map, $rootId, $root,$label);
-        return  $this->needPage($root,$query);
+        return  $this->handleTreeByPage($root,$page,$size);
     }
-    protected function needPage(TreeVO $root, array $query):TreeVO
+    protected function handleTreeByPage(TreeVO $root, int $page=0,int $size =0):TreeVO
     {
 
         $root->total =  $root->children === null ? 0:count($root->children);
@@ -67,10 +67,10 @@ abstract class BaseService
             $root->children = [];
             return  $root;
         }
-        if (!array_key_exists('page',$query) ||$query['page'] === -1 || $query['size']===-1) {
+        if (empty($page) || empty($size)) {
             return $root;
         } else {
-            $end = min($query['page'] * $query['size'], count($root->children));
+            $end = min($page * $size, count($root->children));
             $root->children = array_slice($root->children, ($query['page'] - 1) * $query['size'], $end);
             return $root;
         }

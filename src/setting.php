@@ -2,7 +2,7 @@
 
 use Application\Controller\Product\CategoryController;
 use Application\Controller\Product\ProductController;
-use Application\Controller\System\LoginController;
+
 use Application\Domain\Product\Category;
 use Application\Domain\Product\Product;
 use Application\Domain\Product\ProductInfo;
@@ -36,7 +36,11 @@ return function (\DI\ContainerBuilder $containerBuilder) {
                 //校验规则
                 'validator' => [
 
-                    LoginController::class . ':login' => [
+                    \Application\Controller\UserApi\LoginController::class . ':login' => [
+                        'username' => 'present|string|length_max:64',
+                        'password' => 'present|string|length_max:64'
+                    ],
+                    \Application\Controller\UserApi\LoginController::class . ':register' => [
                         'username' => 'present|string|length_max:64',
                         'password' => 'present|string|length_max:64'
                     ],
@@ -135,7 +139,53 @@ return function (\DI\ContainerBuilder $containerBuilder) {
                     \Application\Controller\UserApi\LoginController::class.":login"=>[
                         'username' => 'present|length_max:64',
                         'password' => 'present|length_max:64'
-                    ]
+                    ],
+                    \Application\Controller\AdminApi\UserController::class . ":saveUser" => [
+                        'username'=>'present|string|length_max:64',
+                        'password'=>'present|string|length_max:64',
+                    ],
+                    \Application\Controller\AdminApi\UserController::class . ":updateUser" => [
+                        'username'=>'present|string|length_max:64',
+                        'password'=>'present|string|length_max:64',
+                        'id'=>'present|integer|length_max:11|min:1',
+                    ],
+                    \Application\Controller\AdminApi\UserController::class.":loadUserByPage" =>[
+                        'username'=>'filled|string|length_max:64',
+                        'page' => 'filled|string|to_type:integer|min:1',
+                        'size' => 'filled|string|to_type:integer|max:100|min:2',
+                    ],
+                    \Application\Controller\AdminApi\UserController::class.":searchUserByPage" =>[
+                        'data' => 'filled|length_max:64|string',
+                        'page' => 'present|string|to_type:integer|min:1',
+                        'size' => 'present|string|to_type:integer|max:100|min:2',
+                    ],
+                    \Application\Controller\AdminApi\UserController::class.":removeUser" =>[
+                        'ids' => 'present|array'
+                    ],
+                    \Application\Controller\AdminApi\RoleController::class . ":saveRole" => [
+                        'name'=>'present|string|length_max:64',
+                        'status'=>'present|integer|length_max:1|min:1',
+                        'desc'=>'filled|string|length_max:64',
+                    ],
+                    \Application\Controller\AdminApi\RoleController::class . ":updateRole" => [
+                        'name'=>'present|string|length_max:64',
+                        'status'=>'present|integer|length_max:11|min:1',
+                        'desc'=>'filled|string|length_max:64',
+                        'id' => 'present|integer|length_max:11|min:1',
+                    ],
+                    \Application\Controller\AdminApi\RoleController::class.":loadRoleByPage" =>[
+                        'id' => 'filled|integer|length_max:11|min:1',
+                        'name'=>'filled|string|length_max:64',
+                        'status'=>'filled|integer|length_max:1|in:1,0',
+                        'page' => 'filled|string|to_type:integer|min:1',
+                        'size' => 'filled|string|to_type:integer|max:100|min:2',
+                    ],
+
+                    \Application\Controller\AdminApi\RoleController::class.":removeRole" =>[
+                        'ids' => 'present|array'
+                    ],
+
+
 
 
 

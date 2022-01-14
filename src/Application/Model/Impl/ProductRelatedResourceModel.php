@@ -8,7 +8,7 @@ use Application\Domain\Product\ProductRelatedResource;
 use Application\Domain\System\Resource;
 use Application\Exception\ModelException;
 use Application\Exception\ModelValidatorParamsException;
-use Application\Model\ProductInfoModelInterFaceInterface;
+use Application\Model\ProductInfoModelInterFace;
 use Application\Model\ProductRelatedResourceModelInterface;
 use Medoo\Medoo;
 use PDO;

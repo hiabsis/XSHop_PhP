@@ -99,6 +99,16 @@ abstract class BaseController
         }
     }
 
+    /**
+     * 获取当前系统用户信息
+     * @return array
+     */
+    protected function getCurrentSystemUserInfo():array
+    {
+
+
+        return  [];
+    }
 
 
 

@@ -23,7 +23,7 @@ class MemuModel extends BaseModel implements MenuModelInterface
     public function __construct(PDO $conn, Medoo $medoo)
     {
         parent::__construct($conn, $medoo);
-        $this->tableName = 'sys_admin_menu';
+        $this->tableName = 'sys_menu';
     }
 
     /**

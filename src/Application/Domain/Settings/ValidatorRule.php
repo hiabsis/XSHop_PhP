@@ -39,7 +39,7 @@ class ValidatorRule implements ValidatorRuleInterface
        if ($this->has($name)){
            return $this->rules[$name];
        }else{
-           throw new ValidatorRulesNotFoundException("校验规则未找到");
+           throw new ValidatorRulesNotFoundException("校验规则未找到 $name");
        }
 
     }

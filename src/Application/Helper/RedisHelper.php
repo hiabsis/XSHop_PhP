@@ -29,6 +29,21 @@ class RedisHelper
      * @param string $key
      * @return bool 存在key返回TRUE
      */
+    public function deleteKey(string $key):bool
+    {
+        if ($this->existKey($key)){
+            $this->redis->del($key);
+        }
+        return true;
+    }
+
+    /**
+     * User: 无畏泰坦
+     * Date: 2021.12.21 16:36
+     * Describe 检查是redis否存在键值
+     * @param string $key
+     * @return bool 存在key返回TRUE
+     */
     public function existKey(string $key):bool
     {
         return $this->redis->exists($key);
@@ -121,6 +136,7 @@ class RedisHelper
     private function getDefaultTimeOut() : int {
         return  3600;
     }
+
     /**
      * User: 无畏泰坦
      * Date: 2021.12.21 15:00
@@ -128,6 +144,7 @@ class RedisHelper
      * @param string $key
      * @param int $start
      * @param int $end
+     * @return array
      */
     public function zRevRange(string $key ,int $start,int $end = -1) : array
     {
@@ -136,6 +153,49 @@ class RedisHelper
         }
 
        return $this->redis->zRevRange($key, $start, $end);
+    }
+
+    /**
+     * 创建一个hash类型的缓存
+     * @param string $name  [hash名]
+     * @param array  $array [要被写入缓存的数组]
+     */
+    public function setHash($name = '',$array = []){
+        if (empty($name)){
+            throw new RedisHelperParamsException("请指定 参数hash name为空");
+        }
+
+        $flag = 1;
+        foreach ($array as $key => $value) {
+            $res = $this->redis->hSet($name,$key,$value);
+            if(!$res)
+                $flag = 0;
+        }
+        if($flag)
+            return 1;
+        else
+            return 'the hash has areadly created,but you can still add the key and the value';
+    }
+    /**
+     * 获取一个hash类型的缓存
+     * @param  string $name [hash名]
+     */
+    public function getHash($name = ''){
+        if (empty($name)){
+            throw new RedisHelperParamsException("请指定 参数hash name为空");
+        }
+        return $this->redis->hGetAll($name);
+    }
+    /**
+     * 获取指定一个hash类型中指定key的值
+     * @param  string $name [hash名]
+     * @param  string $key  [字段的键]
+     */
+    public function getHashValue($name = '',$key = ''){
+        if (empty($name)){
+            throw new RedisHelperParamsException("请指定 参数hash name为空");
+        }
+        return $this->redis->hGet($name,$key);
     }
 
 

@@ -15,4 +15,6 @@ class SystemConstants
     // 文件访问的前缀
     public static $FILE_ACCESS_PATH_PREFIX = "/UploadFile/";
     public static  $PRODUCT_ROOT= "#";
+    public static  $HS256_KEY = "1y9eu20wfh9evyhoeasyhayhzfvewcjskfv";
+    public static  $HS256 = "HS256";
 }

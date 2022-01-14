@@ -10,10 +10,10 @@ return function (\Psr\Container\ContainerInterface $c) {
     $settings = $c->get(\Application\Domain\Settings\SettingsInterface::class);
     $classMapperSettings = $settings->get('classMapper');
     \Application\Helper\ClassHelper::setMapper($classMapperSettings);
-    header("Access-Control-Allow-Credentials: true");
-    header("Access-Control-Allow-Origin: *");
-    header("Access-Control-Allow-Methods: GET,POST,OPTIONS,PUT,DELETE");
-    header('Access-Control-Allow-Headers:x-requested-with,content-type,test-token,test-sessid');
+//    header("Access-Control-Allow-Credentials: true");
+//    header("Access-Control-Allow-Origin: *");
+//    header("Access-Control-Allow-Methods: GET,POST,OPTIONS,PUT,DELETE");
+//    header('Access-Control-Allow-Headers:x-requested-with,content-type,test-token,test-sessid');
     \Application\Helper\UploadHelper::setSaveDit($_SERVER['DOCUMENT_ROOT'].\Application\Constant\SystemConstants::$FILE_ACCESS_PATH_PREFIX);
     \Application\Constant\SystemConstants::$PRODUCT_ROOT = $_SERVER['DOCUMENT_ROOT'];
 };

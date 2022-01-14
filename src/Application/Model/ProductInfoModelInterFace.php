@@ -5,7 +5,7 @@ namespace Application\Model;
 use Application\Domain\Product\Product;
 use Application\Domain\Product\ProductInfo;
 
-interface ProductInfoModelInterFaceInterface extends BaseModelInterface
+interface ProductInfoModelInterFace extends BaseModelInterface
 {
 
     /**

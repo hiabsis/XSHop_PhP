@@ -5,7 +5,7 @@ namespace Application\Model;
 
 /**
  * Created on 2022.01.05 16:34
- * Created by Administrator
+ * Created by istrator
  * Describe
  */
 interface MenuModelInterface

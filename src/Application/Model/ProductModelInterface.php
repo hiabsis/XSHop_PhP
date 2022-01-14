@@ -4,7 +4,7 @@ namespace Application\Model;
 
 use Application\Domain\Product\Product;
 
-interface ProductModelInterfaceInterFace extends BaseModelInterface
+interface ProductModelInterface extends BaseModelInterface
 {
     /**
      * User: 无畏泰坦

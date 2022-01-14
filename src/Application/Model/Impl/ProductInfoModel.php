@@ -6,11 +6,11 @@ use Application\Domain\Product\Product;
 use Application\Domain\Product\ProductInfo;
 use Application\Exception\ModelException;
 use Application\Exception\ModelValidatorParamsException;
-use Application\Model\ProductInfoModelInterFaceInterface;
+use Application\Model\ProductInfoModelInterFace;
 use Medoo\Medoo;
 use PDO;
 
-class ProductInfoModel extends BaseModel implements ProductInfoModelInterFaceInterface
+class ProductInfoModel extends BaseModel implements ProductInfoModelInterFace
 {
 
    public function __construct(PDO $conn, Medoo $medoo)

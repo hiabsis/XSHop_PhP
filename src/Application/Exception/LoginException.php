@@ -1,9 +1,5 @@
 <?php
-/**
- * User: 无畏泰坦
- * Date: 2022.01.07 11:35
- * Describe
- */
+
 
 namespace Application\Exception;
 
@@ -12,7 +8,7 @@ namespace Application\Exception;
  * Created by 无畏泰坦
  * Describe
  */
-class LoginException
+class LoginException extends BaseException
 {
 
 }

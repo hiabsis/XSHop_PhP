@@ -9,7 +9,7 @@ use Application\Domain\Product\Category;
  * Date: 2021.12.16 10:48
  * Describe 商品分类在持久化操作
  */
-interface CategoryModelInterfaceInterface extends BaseModelInterface
+interface CategoryModelInterface extends BaseModelInterface
 {
     /**
      * User: 无畏泰坦

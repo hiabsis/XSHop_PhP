@@ -39,7 +39,7 @@ class MenuService extends BaseService implements MenuServiceInterface
     public function listMenuByPage(int $page=-1,int $size = -1):TreeVO
     {
         $allMenu = $this->menuModel->findMenu();
-        return $this->builderTreeResult($allMenu,['page'=>$page,'size'=>$size],label: 'name_zh');
+        return $this->builderTreeResult($allMenu,$page,$size,label: 'name_zh');
     }
     /**
      * User: 无畏泰坦

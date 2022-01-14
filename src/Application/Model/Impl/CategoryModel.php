@@ -9,7 +9,7 @@ use Application\Model\Impl\BaseModel;
 use Medoo\Medoo;
 use PDO;
 
-class CategoryModel extends BaseModel implements \Application\Model\CategoryModelInterfaceInterface
+class CategoryModel extends BaseModel implements \Application\Model\CategoryModelInterface
 {
 
    public function __construct(PDO $conn, Medoo $medoo)

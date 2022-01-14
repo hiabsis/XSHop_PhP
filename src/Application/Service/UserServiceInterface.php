@@ -8,6 +8,8 @@
 namespace Application\Service;
 
 use Application\Domain\System\User;
+use Application\Domain\VO\TreeVO;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Created on 2021.12.15 16:54
@@ -28,15 +30,7 @@ interface UserServiceInterface
     public function listUserByPage(array $query = []):array;
 
 
-    /**
-     * User: 无畏泰坦
-     * Date: 2022.01.05 18:12
-     * Describe 更新数据
-     * @param array $updateUser
-     * @param int $userId
-     * @return bool
-     */
-    public function updateMenu(array $updateUser, int $userId):bool;
+
 
     /**
      * User: 无畏泰坦
@@ -47,14 +41,7 @@ interface UserServiceInterface
      */
     public function removeMenu(array $ids ):bool;
 
-    /**
-     * User: 无畏泰坦
-     * Date: 2022.01.05 18:12
-     * Describe 数据保存
-     * @param array $user
-     * @return int
-     */
-    public function saveUser(array $user):int;
+
 
     /**
      * User: 无畏泰坦
@@ -65,4 +52,65 @@ interface UserServiceInterface
      * @return array
      */
     public function getUser(string $username,string $password) : array;
+
+    /**
+     * User: 无畏泰坦
+     * Date: 2022.01.07 14:30
+     * Describe
+     * @param array $user
+     * @param $userId
+     * @return bool
+     */
+    public function updateUser(array $user,$userId):bool;
+
+    /**
+     * @author     ：无畏泰坦
+     * @date       ：Created in 2022.01.12 16:28
+     * @description：${description}
+     * @modified By： 用户登入
+     * @version:     1.0
+     */
+    public function login(string $username,string$password) : string;
+
+    /**
+     * @author     ：无畏泰坦
+     * @date       ：Created in 2022.01.13 11:15
+     * @description：${description}
+     * @modified By：
+     * @version:     1.0
+     */
+    public function checkJwtTokenInfo(string $jwtToken);
+
+    /**
+     * @author     ：无畏泰坦
+     * @date       ：Created in 2022.01.13 14:16
+     * @description：检查用户是否存在
+     * @modified By：
+     * @version:     1.0
+     */
+    public function isExist(string $username):bool;
+
+    /**
+     * @author     ：无畏泰坦
+     * @date       ：Created in 2022.01.13 14:28
+     * @description：${description}
+     * @modified By： 用户注册
+     * @version:     1.0
+     */
+    public function register(string $username,string $password):int;
+
+    /**
+     * @author     ：无畏泰坦
+     * @date       ：Created in 2022.01.13 17:30
+     * @description：${description}
+     * @modified By：
+     * @version:     1.0
+     */
+    public function logout(string $jwtToken): bool;
+
+
+    /**
+     * 加载当前用户的菜单
+     */
+    #[Pure] public function getMenusTreeByCurrentUserId(int $currentUserId):TreeVO;
 }

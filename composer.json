@@ -13,7 +13,8 @@
     "fangstar/php-validator": "^1.0",
     "mongdch/mon-util": "^1.3",
     "ext-pdo": "*",
-    "catfan/medoo": "^2.1"
+    "catfan/medoo": "^2.1",
+    "firebase/php-jwt": "^5.5"
   },
 
   "autoload": {

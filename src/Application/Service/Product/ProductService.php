@@ -14,23 +14,23 @@ use Application\Exception\ProductDateNotFind;
 use Application\Helper\ClassHelper;
 use Application\Helper\RedisHelper;
 use Application\Helper\UploadHelper;
-use Application\Model\CategoryModelInterfaceInterface;
-use Application\Model\ProductInfoModelInterFaceInterface;
-use Application\Model\ProductModelInterfaceInterFace;
+use Application\Model\CategoryModelInterface;
+use Application\Model\ProductInfoModelInterFace;
+use Application\Model\ProductModelInterface;
 use Application\Model\ProductRelatedResourceModelInterface;
 
-use Application\Model\ResourceModelInterfaceInterface;
+use Application\Model\ResourceModelInterface;
 use Exception;
 use JetBrains\PhpStorm\ArrayShape;
 
 class ProductService implements \Application\Service\ProductServiceInterface
 {
     /**
-     * @var ProductModelInterfaceInterFace
+     * @var ProductModelInterface
      */
     private $productModel;
     /**
-     * @var ProductInfoModelInterFaceInterface
+     * @var ProductInfoModelInterFace
      */
     private $productInfoModel;
     /**
@@ -38,7 +38,7 @@ class ProductService implements \Application\Service\ProductServiceInterface
      */
     private $productRelatedResourceModel;
     /**
-     * @var CategoryModelInterfaceInterface
+     * @var CategoryModelInterface
      */
     private $categoryModel;
     /**
@@ -46,11 +46,11 @@ class ProductService implements \Application\Service\ProductServiceInterface
      */
     private $redisHelper;
     /**
-     * @var ResourceModelInterfaceInterface
+     * @var ResourceModelInterface
      */
     private $resourceModel;
 
-    public function __construct(ResourceModelInterfaceInterface $resourceModel, ProductModelInterfaceInterFace $productModel, ProductInfoModelInterFaceInterface $productInfoModel, ProductRelatedResourceModelInterface $productRelatedResourceModel, CategoryModelInterfaceInterface $categoryModel, RedisHelper $clint)
+    public function __construct(ResourceModelInterface $resourceModel, ProductModelInterface $productModel, ProductInfoModelInterFace $productInfoModel, ProductRelatedResourceModelInterface $productRelatedResourceModel, CategoryModelInterface $categoryModel, RedisHelper $clint)
     {
         $this->productModel = $productModel;
         $this->productInfoModel = $productInfoModel;

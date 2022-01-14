@@ -9,9 +9,9 @@ use Application\Domain\Product\ProductRelatedResource;
 use Application\Domain\VO\TreeVO;
 use Application\Helper\ClassHelper;
 use Application\Helper\UploadHelper;
-use Application\Model\CategoryModelInterfaceInterface;
+use Application\Model\CategoryModelInterface;
 use Application\Model\ProductRelatedResourceModelInterface;
-use Application\Model\ResourceModelInterfaceInterface;
+use Application\Model\ResourceModelInterface;
 use Medoo\Medoo;
 use mon\util\Tree;
 use Psr\Container\ContainerInterface;
@@ -22,7 +22,7 @@ class CategoryService implements \Application\Service\CategoryServiceInterface
     private $relatedResourceModel;
     private $resourceModel;
 
-    public function __construct(CategoryModelInterfaceInterface $categoryModel, ProductRelatedResourceModelInterface $relatedResourceModel, ResourceModelInterfaceInterface $resourceModel)
+    public function __construct(CategoryModelInterface $categoryModel, ProductRelatedResourceModelInterface $relatedResourceModel, ResourceModelInterface $resourceModel)
     {
         $this->categoryModel = $categoryModel;
         $this->relatedResourceModel = $relatedResourceModel;
