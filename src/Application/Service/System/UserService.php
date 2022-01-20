@@ -7,13 +7,17 @@
 
 namespace Application\Service\System;
 
+use Application\Constant\ErrorEnum;
 use Application\Domain\System\User;
 use Application\Domain\VO\TreeVO;
+use Application\Exception\CommonException;
 use Application\Exception\LoginException;
 use Application\Exception\ModelException;
 use Application\Exception\ServiceException;
 use Application\Exception\ServiceValidatorParamsException;
 use Application\Helper\JWTHelper;
+use Application\Model\ApiMenuModelInterface;
+use Application\Model\ApiModelInterface;
 use Application\Model\MenuModelInterface;
 use Application\Model\RoleMenuModelInterface;
 use Application\Model\UserModelInterface;
@@ -34,15 +38,21 @@ class UserService extends  BaseService implements UserServiceInterface
     private $userRoleModel;
     private $menuModel;
     private $roleMenuModel;
+    private $apiModel;
+    private $apiMenuModel;
     public function __construct(UserModelInterface $userModel,
                                 UserRoleModelInterface $userRoleModel,
                                 MenuModelInterface $menuModel,
+                                ApiMenuModelInterface $apiMenuModel,
+                                ApiModelInterface $apiModel,
                                 RoleMenuModelInterface $roleMenuModel)
     {
         $this->userModel = $userModel;
         $this->userRoleModel = $userRoleModel;
         $this->menuModel = $menuModel;
         $this->roleMenuModel = $roleMenuModel;
+       $this->apiMenuModel=  $apiMenuModel;
+       $this->apiModel = $apiModel;
     }
 
 
@@ -197,7 +207,7 @@ class UserService extends  BaseService implements UserServiceInterface
     {
         $payload  = JWTHelper::decode($jwtToken);
         $token = $payload->token;
-        return $this->userModel->removeUserInfoCache($jwtToken);
+        return $this->userModel->removeUserInfoCache($token);
 
     }
     /**
@@ -208,8 +218,9 @@ class UserService extends  BaseService implements UserServiceInterface
      */
     #[Pure] public function getMenusTreeByCurrentUserId(int $currentUserId):TreeVO
     {
+
         if (empty($currentUserId)){
-            throw  new ServiceValidatorParamsException("无法获取当前登入用户");
+            throw  new CommonException(errorInfo: ErrorEnum::$ERROR_20011);
         }
         // 获得当前用户对应的所有角色的 id 列表
         $userRoles = $this->userRoleModel->findUserRole(select: ['role_id'], queryCondition: ['user_id'=>$currentUserId]);
@@ -226,6 +237,73 @@ class UserService extends  BaseService implements UserServiceInterface
         $menus = $this->menuModel->findMenu(queryCondition: ["id"=>$menuIds]);
         // 处理菜单项的结构
         return  $this->builderTreeResult($menus);
+    }
+
+
+    /**
+     * @return  array => [
+     *   int user_id  用户ID
+     *   string username 用户名
+     *   string nickname 用户昵称
+     *   array role_ids  角色
+     *   array menus     页面
+     *   array permissions 权限
+     * ]
+     * @throws \JsonException
+     * @author     ：无畏泰坦
+     * @date       ：Created in 2022.01.19 15:01
+     * @description：${description}
+     * @modified By：
+     * @version:     1.0
+     */
+    public function getUserDetailInfo(int $userId) :array
+    {
+
+        $res = [];
+        if (empty($userId)){
+            throw  new ServiceValidatorParamsException("无法获取当前登入用户");
+        }
+        $user = $this->userModel->getUser(['id'=>$userId]);
+        $res['user_id'] = $user['id'];
+        $res['username'] = $user['username'];
+        $res['nickname'] = $user['nickname'];
+
+        // 获得当前用户对应的所有角色的 id 列表
+        $userRoles = $this->userRoleModel->findUserRole(select: ['role_id'], queryCondition: ['user_id'=>$userId]);
+        // 查询出这些角色对应的所有菜单项
+        $roleIds = [];
+        foreach ($userRoles as $userRole){
+            $roleIds[] = $userRole['role_id'];
+        }
+        $res['role_ids'] = json_encode($roleIds, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);;
+        $roleMenus = $this->roleMenuModel->findRoleMenu(select:['menu_id'],queryCondition: ['role_id'=> $roleIds]);
+        $menuIds = [];
+        foreach ($roleMenus as $roleMenu){
+            $menuIds[] = $roleMenu['menu_id'];
+        }
+        $menus = $this->menuModel->findMenu(queryCondition: ["id"=>$menuIds]);
+        // 处理菜单项的结构
+        $menusTree =   $this->builderTreeResult($menus);
+        $res['menus'] = json_encode($menusTree, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+        // 查询出这些页面需要的权限
+        $apiMenus = $this->apiMenuModel->findApiMenu(queryCondition:['menu_id'=>$menuIds]);
+        $apiIds = [];
+        foreach ($apiMenus as $apiMenus){
+            $apiIds[] = $apiMenus['api_id'];
+        }
+        if (empty($apiIds)){
+            $res['permission'] = [];
+        }else{
+            $permissions = $this->apiModel->findApi(select:['permission'],queryCondition:['id'=>$apiIds]);
+            $p = [];
+            foreach ($permissions as $permission){
+                $p[] = $permission['permission'];
+            }
+            $p = array_unique($p);
+            $res['permissions'] =  json_encode($p, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+        }
+
+        return $res;
     }
 
 }

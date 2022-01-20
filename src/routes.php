@@ -4,7 +4,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 use \Application\Controller\UserApi\HomeController;
-use \Application\Controller\System\{LoginController, FileUploadController};
+use \Application\Controller\System\{ FileUploadController};
 use Application\Controller\Product\{CategoryController, ProductController};
 use  \Application\Controller\AdminApi\MenuController;
 use \Application\Controller\AdminApi\UserController;
@@ -12,10 +12,9 @@ use \Application\Controller\AdminApi\RoleController;
 return function (\Slim\App $app) {
 
 
-    $app->group('/home', function (Group $group) {
-        $group->get('/banner', HomeController::class . ":getBanner");
-    });
-    $app->post('/token',\Application\Controller\UserApi\LoginController::class . ":login" );
+
+//    $app->post('/token',\Application\Controller\UserApi\LoginController::class . ":login" );
+//    $app->post('/getUserInfo',\Application\Controller\UserApi\LoginController::class . ":getUserInfo" );
 
     $app->group('/shop/product/category', function (Group $group) {
         $group->delete('/{id}', CategoryController::class . ":removeCategory");
@@ -26,7 +25,6 @@ return function (\Slim\App $app) {
         $group->get('/index', CategoryController::class . ":getIndexCategory");
     });
 
-
     $app->group('/shop/product', function (Group $group) {
         $group->delete('/{id}', ProductController::class . ":removeProduct");
         $group->post('', ProductController::class . ":saveProduct");
@@ -35,7 +33,22 @@ return function (\Slim\App $app) {
         $group->get('/{id}', ProductController::class . ":detailProduct");
         $group->get('/carousel/info', ProductController::class . ":listProductCarousel");
     });
-
+    $app->group('/admin/category', function (Group $group) {
+        $group->delete('/{id}', CategoryController::class . ":removeCategory");
+        $group->post('', CategoryController::class . ":saveCategory");
+        $group->get('', CategoryController::class . ":listCategory");
+        $group->put('', CategoryController::class . ":putCategory");
+        $group->get('/tree', CategoryController::class . ":treeCategory");
+        $group->get('/index', CategoryController::class . ":getIndexCategory");
+    });
+    $app->group('/admin/product', function (Group $group) {
+        $group->delete('/{id}', ProductController::class . ":removeProduct");
+        $group->post('', ProductController::class . ":saveProduct");
+        $group->get('', ProductController::class . ":listProduct");
+        $group->put('', ProductController::class . ":putProduct");
+        $group->get('/{id}', ProductController::class . ":detailProduct");
+        $group->get('/carousel/info', ProductController::class . ":listProductCarousel");
+    });
     $app->group('/admin/menu', function (Group $group) {
         $group->post('/remove/{id}', MenuController::class . ":removeMenu");
         $group->post('/save', MenuController::class . ":saveMenu");
@@ -58,12 +71,16 @@ return function (\Slim\App $app) {
         $group->put('/update', RoleController::class . ":updateRole");
         $group->get('/search', RoleController::class . ":searchRoleByPage");
     });
-
+      $app->group('/admin/file', function (Group $group) {
+          $group->post('/img/upload', FileUploadController::class . ":uploadImg");
+          $group->get('/info', FileUploadController::class . ":getResourceInfo");
+      });
 
     $app->group('/user', function (Group $group) {
-        $group->post('/login', \Application\Controller\UserApi\LoginController::class . ":login");
+        $group->post('/authLogin', \Application\Controller\UserApi\LoginController::class . ":authLogin");
         $group->post('/register', \Application\Controller\UserApi\LoginController::class . ":register");
         $group->post('/logout', \Application\Controller\UserApi\LoginController::class . ":logout");
+        $group->get('/userInfo', \Application\Controller\UserApi\LoginController::class . ":getUserInfo");
     });
 
     $app->group('/system/file', function (Group $group) {

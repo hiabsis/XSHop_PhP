@@ -3,16 +3,20 @@
 namespace Application\Controller;
 
 use App\Application\Actions\ActionPayload;
+use Application\Constant\ErrorEnum;
 use Application\Domain\Response\Result;
 use Application\Domain\Settings\ValidatorRuleInterface;
+use Application\Exception\CommonException;
 use Application\Helper\ClassHelper;
 use Application\Helper\ValidatorHelper;
+use Application\Service\TokenServiceInterface;
 use JsonException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 
 use Psr\Http\Message\ResponseInterface as Response;
+use Slim\Exception\HttpUnauthorizedException;
 use Slim\Routing\RouteContext;
 
 
@@ -25,10 +29,12 @@ abstract class BaseController
     protected  $logger;
     protected $params;
     protected $class;
-    public function __construct(LoggerInterface $logger,ValidatorRuleInterface $rule)
+    protected  $tokenService;
+    public function __construct(LoggerInterface $logger,ValidatorRuleInterface $rule,TokenServiceInterface $tokenService)
     {
         $this->logger = $logger;
         $this->rules = $rule;
+        $this->tokenService = $tokenService;
     }
 
 
@@ -55,11 +61,12 @@ abstract class BaseController
      * Date: 2021.12.15 16:11
      * Describe 通过预设的校验规则校验参数
      * @param Request $request
-     * @param string $name  校验规则名称
+     * @param string $method  校验规则名称
      */
-    protected function validatorByName(Request $request,string $name){
+    protected function hasAllRequiredParams(Request $request, string $method){
+        $this->authentication($request);
         $data = [];
-        $name = $this->class.":".$name;
+        $method = $this->class.":".$method;
         if (!empty($request->getUploadedFiles()) ){
             $data = array_merge($data,$request->getUploadedFiles()) ;
         }
@@ -72,7 +79,7 @@ abstract class BaseController
         if (!empty($request->getAttributes())){
             $data = array_merge($request->getAttributes(),$data) ;
         }
-        $rule = $this->rules->getValidatorRule($name);
+        $rule = $this->rules->getValidatorRule($method);
 
         ValidatorHelper::validator($data,$rule);
         $this->params = $data;
@@ -99,17 +106,35 @@ abstract class BaseController
         }
     }
 
+
     /**
-     * 获取当前系统用户信息
-     * @return array
+     * @author     ：无畏泰坦
+     * @date       ：Created in 2022.01.18 13:42
+     * @description：身份认证 授权 权限
+     * @modified By：
+     * @version:     1.0
      */
-    protected function getCurrentSystemUserInfo():array
+    public function authentication(Request $request): bool
     {
-
-
-        return  [];
+        // 获取访问的URL
+        $url =  $request->getUri()->getPath();
+        $token = $this->getRequestToken($request);
+        return  $this->tokenService->checkPermission($url,$token);
     }
 
+
+
+
+    public function getRequestToken(Request $request):string
+    {
+        $token = $request->getCookieParams()['token'];
+        if ($token === null || $token === "" || $token === 'undefined'){
+            // 登入过期
+            throw new CommonException(errorInfo: ErrorEnum::$ERROR_20011);
+        }
+
+        return $token;
+    }
 
 
 

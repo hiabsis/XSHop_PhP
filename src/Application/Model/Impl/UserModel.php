@@ -190,6 +190,7 @@ class UserModel extends BaseModel implements UserModelInterface
         return $this->redis->deleteKey($token);
     }
 
+
     /**
      * User: 无畏泰坦
      * Date: 2021.12.29 16:59
@@ -217,5 +218,11 @@ class UserModel extends BaseModel implements UserModelInterface
             }
         }
         return $where;
+    }
+
+
+    public function getUserDetailInfo(string $username): array
+    {
+        return  [];
     }
 }

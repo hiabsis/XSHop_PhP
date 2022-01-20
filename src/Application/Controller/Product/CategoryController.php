@@ -10,6 +10,7 @@ use Application\Domain\Response\Result;
 use Application\Domain\Settings\ValidatorRuleInterface;
 use Application\Helper\ValidatorHelper;
 use Application\Service\CategoryServiceInterface;
+use Application\Service\TokenServiceInterface;
 use JsonException;
 use Psr\Log\LoggerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -23,13 +24,13 @@ class CategoryController extends BaseController
 
     private $categoryService;
 
-    public function __construct(LoggerInterface $logger, ValidatorRuleInterface $rule, CategoryServiceInterface $categoryService)
+    public function __construct(LoggerInterface $logger, ValidatorRuleInterface $rule, TokenServiceInterface $tokenService,CategoryServiceInterface $categoryService)
     {
-
-        parent::__construct($logger, $rule);
+        parent::__construct($logger, $rule, $tokenService);
         $this->categoryService = $categoryService;
         $this->class = self::class;
     }
+
 
     /**
      * 保存商品分类
@@ -41,7 +42,7 @@ class CategoryController extends BaseController
      */
     public function saveCategory(Request $request, Response $response, $args): Response
     {
-        $this->validatorByName($request,"saveCategory");
+        $this->hasAllRequiredParams($request,"saveCategory");
         $this->validator($request);
         $category = $this->getParamsByClazz(Category::class);
         $resources = $this->getParamsByNameAndClazz('resources', ProductRelatedResource::class);
@@ -55,7 +56,7 @@ class CategoryController extends BaseController
      */
     public function removeCategory(Request $request, Response $response): Response
     {
-        $this->validatorByName($request,"removeCategory");
+        $this->hasAllRequiredParams($request,"removeCategory");
         $id  = $this->getParamsByName('id');
         $res =  $this->categoryService->deleteCategoryById($id);
         return  $this->respondWithJson(Result::SUCCESS($res),$response);
@@ -75,7 +76,7 @@ class CategoryController extends BaseController
     public function listCategory(Request $request, Response $response, $args)
     {
 
-        $this->validatorByName($request,'listCategory');
+        $this->hasAllRequiredParams($request,'listCategory');
 
         $queryCondition = [];
         if (!empty( $this->getParamsByName('parentId'))){
@@ -100,7 +101,7 @@ class CategoryController extends BaseController
      */
     public function treeCategory(Request $request, Response $response, $args):Response
     {
-        $this->validatorByName($request,"treeCategory");
+        $this->hasAllRequiredParams($request,"treeCategory");
         $queryCondition = [];
         if (!empty( $this->getParamsByName('parentId'))){
             $queryCondition['parentId'] = $this->getParamsByName('parentId');
@@ -130,7 +131,7 @@ class CategoryController extends BaseController
      */
     public function putCategory(Request $request, Response $response, $args):Response
     {
-        $this->validatorByName($request,"putCategory");
+        $this->hasAllRequiredParams($request,"putCategory");
         $this->validator($request);
         $category = $this->getParamsByClazz(Category::class);
         $resources = $this->getParamsByNameAndClazz('resources', ProductRelatedResource::class);

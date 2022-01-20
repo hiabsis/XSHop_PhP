@@ -96,4 +96,21 @@ interface UserModelInterface extends BaseModelInterface
     public function removeMenu(array $ids);
 
     public function removeUserInfoCache(string $token);
+
+    /**
+     * @author     ：无畏泰坦
+     * @date       ：Created in 2022.01.19 15:01
+     * @description：${description}
+     * @modified By：
+     * @version:     1.0
+     * @return  array => [
+     *   int user_id  用户ID
+     *   string username 用户名
+     *   string nickname 用户昵称
+     *   array role_ids  角色
+     *   array menus     页面
+     *   array permissions 权限
+     * ]
+     */
+    public function getUserDetailInfo(string $username) :array;
 }

@@ -155,7 +155,7 @@ class SystemErrorInfo
             'code' => self::ERROR_CODE_MODEL_EXCEPTION,
             'msg' => '系统异常',
         ],
-        Exception::class => [
+        \Exception::class => [
             'code' => self::ERROR_CODE_SYSTEM_ERROR,
             'msg' => '系统异常',
         ],

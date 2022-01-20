@@ -12,6 +12,7 @@ use Application\Domain\Product\Product;
 use Application\Domain\Response\Result;
 use Application\Domain\Settings\ValidatorRuleInterface;
 use Application\Service\ProductServiceInterface;
+use Application\Service\TokenServiceInterface;
 use JetBrains\PhpStorm\Pure;
 use JsonException;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -34,12 +35,13 @@ class HomeController extends BaseController
      * @param ValidatorRuleInterface $rule 校验规则
      * @param ProductServiceInterface $productService
      */
-     public function __construct(LoggerInterface $logger, ValidatorRuleInterface $rule, ProductServiceInterface $productService)
+    public function __construct(LoggerInterface $logger, ValidatorRuleInterface $rule, TokenServiceInterface $tokenService, ProductServiceInterface $productService)
     {
-        parent::__construct($logger, $rule);
+        parent::__construct($logger, $rule, $tokenService);
         $this->productService = $productService;
         $this->class = self::class;
     }
+
 
     /**
      * User: 无畏泰坦

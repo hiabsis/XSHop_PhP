@@ -6,6 +6,11 @@ use Throwable;
 
 abstract class BaseException extends \RuntimeException implements LoggerException
 {
+    private $errorInfo;
+    public function setErrorInfo(array $errorInfo)
+    {
+        $this->errorInfo = $errorInfo;
+    }
 
     /**
      * @var array  返回给前端的异常信息

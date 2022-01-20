@@ -11,6 +11,7 @@ use Application\Controller\BaseController;
 use Application\Domain\Response\Result;
 use Application\Domain\Settings\ValidatorRuleInterface;
 use Application\Helper\JWTHelper;
+use Application\Service\TokenServiceInterface;
 use Application\Service\UserServiceInterface;
 use JsonException;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -29,9 +30,9 @@ class UserController extends BaseController
      * @var UserServiceInterface
      */
     private  $UserService;
-    public function __construct(LoggerInterface $logger, ValidatorRuleInterface $rule,UserServiceInterface $UserService)
+    public function __construct(LoggerInterface $logger, ValidatorRuleInterface $rule, TokenServiceInterface $tokenService,UserServiceInterface $UserService)
     {
-        parent::__construct($logger, $rule);
+        parent::__construct($logger, $rule, $tokenService);
         $this->UserService = $UserService;
         $this->class = self::class;
     }
@@ -47,7 +48,7 @@ class UserController extends BaseController
      * @throws JsonException
      */
     public function loadUserByPage(Request $request, Response $response, array $args) :Response{
-        $this->validatorByName($request,'loadUserByPage');
+        $this->hasAllRequiredParams($request,'loadUserByPage');
         $query = $this->getQueryUserContition();
         $query[] =  number_format($this->getParamsByName('page')??-1);
         $query[] =  number_format($this->getParamsByName('size')??-1);
@@ -66,7 +67,7 @@ class UserController extends BaseController
      * @throws JsonException
      */
     public function searchUserByPage(Request $request, Response $response, array $args) :Response{
-        $this->validatorByName($request,'searchUserByPage');
+        $this->hasAllRequiredParams($request,'searchUserByPage');
         $query = $this->getSearchUser();
         $query['page'] =  number_format($this->getParamsByName('page')??-1);
         $query['size'] =  number_format($this->getParamsByName('size')??-1);
@@ -85,7 +86,7 @@ class UserController extends BaseController
      * @throws JsonException
      */
     public function saveUser(Request $request, Response $response, array $args) :Response{
-        $this->validatorByName($request ,'saveUser');
+        $this->hasAllRequiredParams($request ,'saveUser');
         $user = $this->getQueryUserContition();
         $this->UserService->saveUser($user);
         return $this->respondWithJson(Result::SUCCESS(),$response);
@@ -102,7 +103,7 @@ class UserController extends BaseController
      * @throws JsonException
      */
     public function updateUser(Request $request, Response $response, array $args) :Response{
-        $this->validatorByName($request ,'updateUser');
+        $this->hasAllRequiredParams($request ,'updateUser');
         $updateUser = $this->getQueryUserContition();
         $UserId = $this->getParamsByName('id');
         $this->UserService->updateUser($updateUser,$UserId);
@@ -120,7 +121,7 @@ class UserController extends BaseController
      * @throws JsonException
      */
     public function removeUser(Request $request, Response $response, array $args) :Response{
-        $this->validatorByName($request ,'removeUser');
+        $this->hasAllRequiredParams($request ,'removeUser');
         $ids = $this->getParamsByName('ids');
         $this->UserService->removeUser($ids);
         return $this->respondWithJson(Result::SUCCESS(),$response);

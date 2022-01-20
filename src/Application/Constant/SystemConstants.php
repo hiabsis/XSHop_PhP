@@ -17,4 +17,9 @@ class SystemConstants
     public static  $PRODUCT_ROOT= "#";
     public static  $HS256_KEY = "1y9eu20wfh9evyhoeasyhayhzfvewcjskfv";
     public static  $HS256 = "HS256";
+    public static  $API_TYPE_OPENING = 1;
+    public static  $API_TYPE_PERMISSON = 2;
+    public static  $API_TYPE_NOT_EXITS = 3;
+    public static  $API_STATUS_NOT = 1;
+    public static  $API_STATUS_COMMON = 0;
 }

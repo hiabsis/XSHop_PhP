@@ -11,6 +11,7 @@ use Application\Controller\BaseController;
 use Application\Domain\Response\Result;
 use Application\Domain\Settings\ValidatorRuleInterface;
 use Application\Service\RoleServiceInterface;
+use Application\Service\TokenServiceInterface;
 use JsonException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -28,9 +29,9 @@ class RoleController extends BaseController
      * @var RoleServiceInterface
      */
     private  $RoleService;
-    public function __construct(LoggerInterface $logger, ValidatorRuleInterface $rule,RoleServiceInterface $RoleService)
+    public function __construct(LoggerInterface $logger, ValidatorRuleInterface $rule, TokenServiceInterface $tokenService,RoleServiceInterface $RoleService)
     {
-        parent::__construct($logger, $rule);
+        parent::__construct($logger, $rule, $tokenService);
         $this->RoleService = $RoleService;
         $this->class = self::class;
     }
@@ -46,7 +47,7 @@ class RoleController extends BaseController
      * @throws JsonException
      */
     public function loadRoleByPage(Request $request, Response $response, array $args) :Response{
-        $this->validatorByName($request,'loadRoleByPage');
+        $this->hasAllRequiredParams($request,'loadRoleByPage');
         $query = $this->getQueryRoleCondition();
         $query[] =  number_format($this->getParamsByName('page')??-1);
         $query[] =  number_format($this->getParamsByName('size')??-1);
@@ -65,7 +66,7 @@ class RoleController extends BaseController
      * @throws JsonException
      */
     public function searchRoleByPage(Request $request, Response $response, array $args) :Response{
-        $this->validatorByName($request,'searchRoleByPage');
+        $this->hasAllRequiredParams($request,'searchRoleByPage');
         $query = $this->getSearchRole();
         $query['page'] =  number_format($this->getParamsByName('page')??-1);
         $query['size'] =  number_format($this->getParamsByName('size')??-1);
@@ -84,7 +85,7 @@ class RoleController extends BaseController
      * @throws JsonException
      */
     public function saveRole(Request $request, Response $response, array $args) :Response{
-        $this->validatorByName($request ,'saveRole');
+        $this->hasAllRequiredParams($request ,'saveRole');
         $Role = $this->getQueryRoleCondition();
         $this->RoleService->saveRole($Role);
         return $this->respondWithJson(Result::SUCCESS(),$response);
@@ -101,7 +102,7 @@ class RoleController extends BaseController
      * @throws JsonException
      */
     public function updateRole(Request $request, Response $response, array $args) :Response{
-        $this->validatorByName($request ,'updateRole');
+        $this->hasAllRequiredParams($request ,'updateRole');
         $updateRole = $this->getQueryRoleCondition();
         $RoleId = $this->getParamsByName('id');
         $this->RoleService->updateRole($updateRole,$RoleId);
@@ -119,7 +120,7 @@ class RoleController extends BaseController
      * @throws JsonException
      */
     public function removeRole(Request $request, Response $response, array $args) :Response{
-        $this->validatorByName($request ,'removeRole');
+        $this->hasAllRequiredParams($request ,'removeRole');
         $ids = $this->getParamsByName('ids');
         $this->RoleService->removeRole($ids);
         return $this->respondWithJson(Result::SUCCESS(),$response);

@@ -15,5 +15,7 @@ return function (\DI\ContainerBuilder $containerBuilder) {
         \Application\Model\MenuModelInterface::class => \DI\autowire(\Application\Model\Impl\MemuModel::class),
         \Application\Model\RoleMenuModelInterface::class =>  \DI\autowire(\Application\Model\Impl\RoleMenuModel::class),
         \Application\Model\UserRoleModelInterface::class =>  \DI\autowire(\Application\Model\Impl\UserRoleModel::class),
-    ]);
+        \Application\Model\ApiMenuModelInterface::class =>  \DI\autowire(\Application\Model\Impl\ApiMenuModel::class),
+        \Application\Model\ApiModelInterface::class =>  \DI\autowire(\Application\Model\Impl\ApiModel::class),
+       ]);
 };

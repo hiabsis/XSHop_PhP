@@ -57,7 +57,7 @@ class FileUploadController extends \Application\Controller\BaseController
      */
     public function getResourceInfo(Request $request, Response $response, array $args):Response
     {
-        $this->validatorByName($request,"getImgAccessPath");
+        $this->hasAllRequiredParams($request,"getImgAccessPath");
         $queryCondition = [];
         $queryCondition['id'] = (int)($this->getParamsByName('id'));
         $queryCondition['type'] = (int)$this->getParamsByName('type');

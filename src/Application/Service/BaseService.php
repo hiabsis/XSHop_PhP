@@ -102,4 +102,23 @@ abstract class BaseService
         $root->total = count($root->children);
     }
 
+    /**
+     * @author     ：无畏泰坦
+     * @date       ：Created in 2022.01.13 14:31
+     * @description：${description}
+     * @modified By： 密码加密
+     * @version:     1.0
+     */
+    public function  encodePassword(string $password,string $salt=""): array
+    {
+        if (empty($salt)){
+            // 生成盐,默认长度 16 位
+            $salt = substr(uuid(),0,16);
+        }
+
+        // 得到 hash 后的密码
+        return ['password'=>md5($password.$salt),'salt'=> $salt];
+    }
+
+
 }

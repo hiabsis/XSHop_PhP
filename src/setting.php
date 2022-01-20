@@ -40,6 +40,10 @@ return function (\DI\ContainerBuilder $containerBuilder) {
                         'username' => 'present|string|length_max:64',
                         'password' => 'present|string|length_max:64'
                     ],
+                    \Application\Controller\UserApi\LoginController::class . ':authLogin' => [
+                        'username' => 'present|string|length_max:64',
+                        'password' => 'present|string|length_max:64'
+                    ],
                     \Application\Controller\UserApi\LoginController::class . ':register' => [
                         'username' => 'present|string|length_max:64',
                         'password' => 'present|string|length_max:64'
@@ -141,6 +145,10 @@ return function (\DI\ContainerBuilder $containerBuilder) {
                         'password' => 'present|length_max:64'
                     ],
                     \Application\Controller\AdminApi\UserController::class . ":saveUser" => [
+                        'username'=>'present|string|length_max:64',
+                        'password'=>'present|string|length_max:64',
+                    ],
+                    \Application\Controller\AdminApi\UserController::class . ":authLogin" => [
                         'username'=>'present|string|length_max:64',
                         'password'=>'present|string|length_max:64',
                     ],

@@ -15,6 +15,7 @@ use Application\Helper\ClassHelper;
 use Application\Helper\ValidatorHelper;
 use Application\Service\CategoryServiceInterface;
 use Application\Service\ProductServiceInterface;
+use Application\Service\TokenServiceInterface;
 use FangStarNet\PHPValidator\Validator;
 use JsonException;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -31,12 +32,13 @@ class ProductController extends BaseController
      * @param ValidatorRuleInterface $rule 校验规则
      * @param ProductServiceInterface $productService
      */
-    public function __construct(LoggerInterface $logger, ValidatorRuleInterface $rule, ProductServiceInterface $productService)
+    public function __construct(LoggerInterface $logger, ValidatorRuleInterface $rule, TokenServiceInterface $tokenService,ProductServiceInterface $productService)
     {
-        parent::__construct($logger, $rule);
+        parent::__construct($logger, $rule, $tokenService);
         $this->productService = $productService;
         $this->class = self::class;
     }
+
 
     /**
      * User: 无畏泰坦
@@ -48,7 +50,7 @@ class ProductController extends BaseController
      */
     public function removeProduct(Request $request, Response $response, array $args):Response
     {
-        $this->validatorByName($request, 'removeProduct');
+        $this->hasAllRequiredParams($request, 'removeProduct');
         $id = $this->getParamsByName('id');
         $this->productService->removeProductById($id);
         return $this->respondWithJson(Result::SUCCESS(), $response);
@@ -66,7 +68,7 @@ class ProductController extends BaseController
      */
     public function putProduct(Request $request, Response $response, array $args):Response
     {
-        $this->validatorByName($request, 'putProduct');
+        $this->hasAllRequiredParams($request, 'putProduct');
         $this->validator($request);
         // 获取参数
         $product = $this->getParamsByClazz(Product::class);
@@ -91,7 +93,7 @@ class ProductController extends BaseController
     public function detailProduct(Request $request, Response $response, array $args):Response
     {
         //参数校验
-        $this->validatorByName($request, 'detailProduct');
+        $this->hasAllRequiredParams($request, 'detailProduct');
         // 获取参数
         $id = $this->getParamsByName('id');
         // 商品详情
@@ -114,7 +116,7 @@ class ProductController extends BaseController
     {
 
         // 预设校验
-        $this->validatorByName($request, 'saveProduct');
+        $this->hasAllRequiredParams($request, 'saveProduct');
         // 自定义校验
         $this->validator($request);
         // 获取参数
@@ -131,7 +133,7 @@ class ProductController extends BaseController
      */
     public function newestProduct($request, $response, $args)
     {
-        $this->validatorByName($request, 'newestProduct');
+        $this->hasAllRequiredParams($request, 'newestProduct');
     }
 
     /**
@@ -143,7 +145,7 @@ class ProductController extends BaseController
      */
     public function hotProduct($request, $response, $args)
     {
-        $this->validatorByName($request, 'hotProduct');
+        $this->hasAllRequiredParams($request, 'hotProduct');
     }
 
     protected function validator(Request $request, array $rules = null)
@@ -201,7 +203,7 @@ class ProductController extends BaseController
     public function listProduct(Request $request, Response $response, array $args):Response
     {
         // 预设校验
-        $this->validatorByName($request, 'listProduct');
+        $this->hasAllRequiredParams($request, 'listProduct');
         $queryCondition = [];
         $limit = [];
         if (!empty( $this->getParamsByName('productName'))){

@@ -11,6 +11,7 @@ use Application\Controller\BaseController;
 use Application\Domain\Response\Result;
 use Application\Domain\Settings\ValidatorRuleInterface;
 use Application\Service\MenuServiceInterface;
+use Application\Service\TokenServiceInterface;
 use JsonException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -27,13 +28,15 @@ class MenuController extends BaseController
     /**
      * @var MenuServiceInterface
      */
-    private  $menuService;
-    public function __construct(LoggerInterface $logger, ValidatorRuleInterface $rule,MenuServiceInterface $menuService)
+    private $menuService;
+
+    public function __construct(LoggerInterface $logger, ValidatorRuleInterface $rule, TokenServiceInterface $tokenService, MenuServiceInterface $menuService)
     {
-        parent::__construct($logger, $rule);
+        parent::__construct($logger, $rule, $tokenService);
         $this->menuService = $menuService;
         $this->class = self::class;
     }
+
 
     /**
      * User: 无畏泰坦
@@ -45,12 +48,13 @@ class MenuController extends BaseController
      * @return Response
      * @throws JsonException
      */
-    public function loadMenuByPage(Request $request, Response $response, array $args) :Response{
-        $this->validatorByName($request,'loadMenuByPage');
-        $page =  number_format($this->getParamsByName('page')??-1);
-        $size =  number_format($this->getParamsByName('size')??-1);
-        $res = $this->menuService->listMenuByPage($page,$size);
-        return $this->respondWithJson(Result::SUCCESS($res),$response);
+    public function loadMenuByPage(Request $request, Response $response, array $args): Response
+    {
+        $this->hasAllRequiredParams($request, 'loadMenuByPage');
+        $page = number_format($this->getParamsByName('page') ?? -1);
+        $size = number_format($this->getParamsByName('size') ?? -1);
+        $res = $this->menuService->listMenuByPage($page, $size);
+        return $this->respondWithJson(Result::SUCCESS($res), $response);
     }
 
     /**
@@ -63,13 +67,14 @@ class MenuController extends BaseController
      * @return Response
      * @throws JsonException
      */
-    public function searchMenuByPage(Request $request, Response $response, array $args) :Response{
-        $this->validatorByName($request,'searchMenuByPage');
+    public function searchMenuByPage(Request $request, Response $response, array $args): Response
+    {
+        $this->hasAllRequiredParams($request, 'searchMenuByPage');
         $query = $this->getSearchMenu();
-        $query['page'] =  number_format($this->getParamsByName('page')??-1);
-        $query['size'] =  number_format($this->getParamsByName('size')??-1);
+        $query['page'] = number_format($this->getParamsByName('page') ?? -1);
+        $query['size'] = number_format($this->getParamsByName('size') ?? -1);
         $res = $this->menuService->searchMenuByPage($query);
-        return $this->respondWithJson(Result::SUCCESS($res),$response);
+        return $this->respondWithJson(Result::SUCCESS($res), $response);
     }
 
     /**
@@ -82,11 +87,12 @@ class MenuController extends BaseController
      * @return Response
      * @throws JsonException
      */
-    public function saveMenu(Request $request, Response $response, array $args) :Response{
-        $this->validatorByName($request ,'saveMenu');
+    public function saveMenu(Request $request, Response $response, array $args): Response
+    {
+        $this->hasAllRequiredParams($request, 'saveMenu');
         $menu = $this->getMenu();
         $this->menuService->saveMenu($menu);
-        return $this->respondWithJson(Result::SUCCESS(),$response);
+        return $this->respondWithJson(Result::SUCCESS(), $response);
     }
 
     /**
@@ -99,12 +105,13 @@ class MenuController extends BaseController
      * @return Response
      * @throws JsonException
      */
-    public function updateMenu(Request $request, Response $response, array $args) :Response{
-        $this->validatorByName($request ,'updateMenu');
+    public function updateMenu(Request $request, Response $response, array $args): Response
+    {
+        $this->hasAllRequiredParams($request, 'updateMenu');
         $updateMenu = $this->getMenu();
         $menuId = $this->getParamsByName('id');
-        $this->menuService->updateMenu($updateMenu,$menuId);
-        return $this->respondWithJson(Result::SUCCESS(),$response);
+        $this->menuService->updateMenu($updateMenu, $menuId);
+        return $this->respondWithJson(Result::SUCCESS(), $response);
     }
 
     /**
@@ -117,11 +124,12 @@ class MenuController extends BaseController
      * @return Response
      * @throws JsonException
      */
-    public function removeMenu(Request $request, Response $response, array $args) :Response{
-        $this->validatorByName($request ,'removeMenu');
+    public function removeMenu(Request $request, Response $response, array $args): Response
+    {
+        $this->hasAllRequiredParams($request, 'removeMenu');
         $ids = $this->getParamsByName('ids');
         $this->menuService->removeMenu($ids);
-        return $this->respondWithJson(Result::SUCCESS(),$response);
+        return $this->respondWithJson(Result::SUCCESS(), $response);
     }
 
     /**
@@ -133,19 +141,19 @@ class MenuController extends BaseController
     protected function getMenu(): array
     {
         $menu = [];
-        if ($this->getParamsByName('path')!== null){
+        if ($this->getParamsByName('path') !== null) {
             $menu['path'] = $this->getParamsByName('path');
         }
-        if ($this->getParamsByName('name')!== null){
+        if ($this->getParamsByName('name') !== null) {
             $menu['name'] = $this->getParamsByName('name');
         }
-        if ($this->getParamsByName('component')!== null){
+        if ($this->getParamsByName('component') !== null) {
             $menu['component'] = $this->getParamsByName('component');
         }
-        if ($this->getParamsByName('parent_id')!== null){
+        if ($this->getParamsByName('parent_id') !== null) {
             $menu['parent_id'] = $this->getParamsByName('parent_id');
         }
-        if ($this->getParamsByName('name_zh')!== null){
+        if ($this->getParamsByName('name_zh') !== null) {
             $menu['name_zh'] = $this->getParamsByName('name_zh');
         }
 
@@ -164,7 +172,7 @@ class MenuController extends BaseController
     protected function getSearchMenu(): array
     {
         $menu = [];
-        if ($this->getParamsByName('data')!== null){
+        if ($this->getParamsByName('data') !== null) {
             $menu['path'] = $this->getParamsByName('data');
             $menu['name'] = $this->getParamsByName('data');
             $menu['component'] = $this->getParamsByName('data');
@@ -172,8 +180,6 @@ class MenuController extends BaseController
         }
         return $menu;
     }
-
-
 
 
 }

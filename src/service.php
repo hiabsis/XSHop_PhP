@@ -9,5 +9,7 @@ return function (\DI\ContainerBuilder $containerBuilder) {
         \Application\Service\UserServiceInterface::class => \DI\autowire(\Application\Service\System\UserService::class),
         \Application\Service\RoleServiceInterface::class => \DI\autowire(\Application\Service\System\RoleService::class),
         \Application\Service\MenuServiceInterface::class => \DI\autowire(\Application\Service\System\MenuService::class),
+        \Application\Service\TokenServiceInterface::class => \DI\autowire(\Application\Service\System\TokenService::class),
+        \Application\Service\LoginServiceInterface::class => \DI\autowire(\Application\Service\System\LoginService::class),
     ]);
 };
