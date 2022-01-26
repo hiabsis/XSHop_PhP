@@ -68,17 +68,25 @@ class TokenService extends BaseService implements TokenServiceInterface
         }
         $userInfo['permissions'] = json_decode($userInfo['permissions'], true, 512, JSON_THROW_ON_ERROR);
         $userInfo['menus'] = json_decode($userInfo['menus'], false, 512, JSON_THROW_ON_ERROR);
-        $userInfo['role_ids'] = json_decode($userInfo['role_ids'], true, 512, JSON_THROW_ON_ERROR);
+        $userInfo['roleIds'] = json_decode($userInfo['role_ids'], true, 512, JSON_THROW_ON_ERROR);
+        $userInfo['routerList'] = json_decode($userInfo['routerList'], true, 512, JSON_THROW_ON_ERROR);
         return  $userInfo;
     }
 
     public function checkToken($token): bool
     {
-        $payload = JWTHelper::decode($token);
-        $jwt = JWTHelper::encode(payload: (array)$payload);
-        if ($jwt !== $token) {
+        try {
+            $payload = JWTHelper::decode($token);
+            $jwt = JWTHelper::encode(payload: (array)$payload);
+            if ($jwt !== $token) {
+                return false;
+            }
+        }catch (\Exception $e){
+            $a = 1;
             return false;
         }
+
+
         return true;
     }
 
@@ -99,11 +107,9 @@ class TokenService extends BaseService implements TokenServiceInterface
         $api = $this->getApiInfo($url);
         if ($api['type'] === SystemConstants::$API_TYPE_OPENING){
             return  true;
-        }
-        if ($api['type'] === SystemConstants::$API_TYPE_NOT_EXITS){
+        } else if ($api['type'] === SystemConstants::$API_TYPE_NOT_EXITS){
             throw new CommonException(errorInfo: ErrorEnum::$ERROR_410);
-        }
-        if (empty($token)){
+        } else if ($api['type'] === SystemConstants::$API_TYPE_PERMISSON && empty($token)){
             throw  new CommonException(errorInfo: ErrorEnum::$ERROR_20011);
         }
         $userInfo = $this->getUserInfo($token);
@@ -138,7 +144,7 @@ class TokenService extends BaseService implements TokenServiceInterface
         if ( $api['type'] === SystemConstants::$API_TYPE_NOT_EXITS){
             throw  new CommonException(errorInfo: ErrorEnum::$ERROR_410);
         }
-        if (empty($api) ){
+        if (empty($api)  ){
             $api = $this->apiModel->getApi(select: ['path','permission','status','type'],queryCondition: ['path'=>$uri,'status' => SystemConstants::$API_STATUS_COMMON]);
             if (empty($api)){
                 $cache = ['type'=>SystemConstants::$API_TYPE_NOT_EXITS];
@@ -149,5 +155,11 @@ class TokenService extends BaseService implements TokenServiceInterface
 
         return $api;
     }
-
+    public function isOpenUrl(string $url)
+    {
+       $api = $this->getApiInfo($url);
+       if ($api['type'] === SystemConstants::$API_TYPE_OPENING){
+           return true;
+       }
+    }
 }

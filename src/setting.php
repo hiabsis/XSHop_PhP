@@ -1,8 +1,8 @@
 <?php
 
-use Application\Controller\Product\CategoryController;
-use Application\Controller\Product\ProductController;
-
+use Application\Controller\System\ApiController;
+use Application\Controller\System\CategoryController;
+use Application\Controller\System\ProductController;
 use Application\Domain\Product\Category;
 use Application\Domain\Product\Product;
 use Application\Domain\Product\ProductInfo;
@@ -21,7 +21,7 @@ return function (\DI\ContainerBuilder $containerBuilder) {
                 'logErrorDetails' => true,
                 'logger' => [
                     'name' => 'slim-app',
-                    'path' => 'E:/work_pace\shop/XSHOP_PD/XShop/logs/app.log',
+                    'path' => 'E:/XShop/logs/app.log',
                     'level' => \Monolog\Logger::DEBUG,
                 ],
                 'db' => [
@@ -58,15 +58,15 @@ return function (\DI\ContainerBuilder $containerBuilder) {
                         'categoryName' => 'filled|string|length_max:32',
                     ],
                     CategoryController::class . ":removeCategory" => [
-                        'id' => 'filled|string|length_max:11|to_type:integer'
+                        'id' => 'present|integer|length_max:11|to_type:integer'
                     ],
                     CategoryController::class . ":putCategory" => [
                         'categoryName' => 'present|filled|string|length_max:32',
-                        'parentId' => 'present|string|length_max:11|to_type:integer',
-                        'categoryId' => 'present|string|length_max:11|to_type:integer',
-                        'categorySort' => 'present|string|length_max:4|max:1000|min:1|to_type:integer',
-                        'categoryStatus' => 'present|string|to_type:integer|length_max:2|in:1,0',
-                        'categoryType' => 'present|string|to_type:integer|length_max:2|in:0,1',
+                        'parentId' => 'present|length_max:11|to_type:integer',
+                        'categoryId' => 'present|length_max:11|to_type:integer',
+                        'categorySort' => 'present|length_max:4|max:1000|min:1|to_type:integer',
+                        'categoryStatus' => 'present|to_type:integer|length_max:2|in:1,0',
+                        'categoryType' => 'present|to_type:integer|length_max:2|in:0,1',
 
                     ],
                     CategoryController::class . ":saveCategory" => [
@@ -111,15 +111,15 @@ return function (\DI\ContainerBuilder $containerBuilder) {
                         'id' => 'to_type:integer|integer_str|to_type:integer',
                         'type' => 'to_type:integer|integer_str|to_type:integer',
                     ],
-                    \Application\Controller\AdminApi\MenuController::class . ":saveMenu" => [
+                    \Application\Controller\System\MenuController::class . ":saveMenu" => [
                         'path' => 'present|length_max:128|string',
                         'name' => 'present|length_max:64|string',
-                        'component' => 'present|length_max:64|string',
+                        'component' => 'filled|length_max:64|string',
                         'parent_id' => 'present|length_max:11|integer',
                         'name_zh' => 'present|length_max:64|string',
                         'icon' => 'filled|length_max:64|string',
                     ],
-                    \Application\Controller\AdminApi\MenuController::class . ":updateMenu" => [
+                    \Application\Controller\System\MenuController::class . ":updateMenu" => [
                         'path' => 'present|length_max:128|string',
                         'name' => 'present|length_max:64|string',
                         'id' => 'present|length_max:11|integer',
@@ -128,60 +128,66 @@ return function (\DI\ContainerBuilder $containerBuilder) {
                         'name_zh' => 'present|length_max:64|string',
                         'icon' => 'filled|length_max:64|string',
                     ],
-                    \Application\Controller\AdminApi\MenuController::class.":loadMenuByPage" =>[
+                    \Application\Controller\System\MenuController::class.":loadMenuByPage" =>[
                         'page' => 'filled|string|to_type:integer|min:1',
                         'size' => 'filled|string|to_type:integer|max:100|min:2',
                     ],
-                    \Application\Controller\AdminApi\MenuController::class.":searchMenuByPage" =>[
+                    \Application\Controller\System\MenuController::class.":searchMenuByPage" =>[
                         'data' => 'filled|length_max:64|string',
                         'page' => 'present|string|to_type:integer|min:1',
                         'size' => 'present|string|to_type:integer|max:100|min:2',
                     ],
-                    \Application\Controller\AdminApi\MenuController::class.":removeMenu" =>[
+                    \Application\Controller\System\MenuController::class.":removeMenu" =>[
                       'ids' => 'present|array'
                     ],
                     \Application\Controller\UserApi\LoginController::class.":login"=>[
                         'username' => 'present|length_max:64',
                         'password' => 'present|length_max:64'
                     ],
-                    \Application\Controller\AdminApi\UserController::class . ":saveUser" => [
+                    \Application\Controller\System\UserController::class . ":saveUser" => [
                         'username'=>'present|string|length_max:64',
                         'password'=>'present|string|length_max:64',
                     ],
-                    \Application\Controller\AdminApi\UserController::class . ":authLogin" => [
+                    \Application\Controller\System\UserController::class . ":authLogin" => [
                         'username'=>'present|string|length_max:64',
                         'password'=>'present|string|length_max:64',
                     ],
-                    \Application\Controller\AdminApi\UserController::class . ":updateUser" => [
-                        'username'=>'present|string|length_max:64',
-                        'password'=>'present|string|length_max:64',
+                    \Application\Controller\System\UserController::class . ":editorUserStatus" => [
+                        'id'=>'present|integer|length_max:64',
+                        'enabled'=>'present|boolean|length_max:64|to_type:boolean',
+                    ],
+
+                    \Application\Controller\System\UserController::class . ":updateUser" => [
+                        'username'=>'filled|string|length_max:64',
+                        'password'=>'filled|string|length_max:64',
                         'id'=>'present|integer|length_max:11|min:1',
+                        'roleIds'=>'filled|array',
                     ],
-                    \Application\Controller\AdminApi\UserController::class.":loadUserByPage" =>[
+                    \Application\Controller\System\UserController::class.":loadUserByPage" =>[
                         'username'=>'filled|string|length_max:64',
                         'page' => 'filled|string|to_type:integer|min:1',
                         'size' => 'filled|string|to_type:integer|max:100|min:2',
                     ],
-                    \Application\Controller\AdminApi\UserController::class.":searchUserByPage" =>[
+                    \Application\Controller\System\UserController::class.":searchUserByPage" =>[
                         'data' => 'filled|length_max:64|string',
                         'page' => 'present|string|to_type:integer|min:1',
                         'size' => 'present|string|to_type:integer|max:100|min:2',
                     ],
-                    \Application\Controller\AdminApi\UserController::class.":removeUser" =>[
+                    \Application\Controller\System\UserController::class.":removeUser" =>[
                         'ids' => 'present|array'
                     ],
-                    \Application\Controller\AdminApi\RoleController::class . ":saveRole" => [
+                    \Application\Controller\System\RoleController::class . ":saveRole" => [
                         'name'=>'present|string|length_max:64',
                         'status'=>'present|integer|length_max:1|min:1',
                         'desc'=>'filled|string|length_max:64',
                     ],
-                    \Application\Controller\AdminApi\RoleController::class . ":updateRole" => [
+                    \Application\Controller\System\RoleController::class . ":updateRole" => [
                         'name'=>'present|string|length_max:64',
-                        'status'=>'present|integer|length_max:11|min:1',
+                        'enabled'=>'filled|boolean|length_max:1',
                         'desc'=>'filled|string|length_max:64',
                         'id' => 'present|integer|length_max:11|min:1',
                     ],
-                    \Application\Controller\AdminApi\RoleController::class.":loadRoleByPage" =>[
+                    \Application\Controller\System\RoleController::class.":loadRoleByPage" =>[
                         'id' => 'filled|integer|length_max:11|min:1',
                         'name'=>'filled|string|length_max:64',
                         'status'=>'filled|integer|length_max:1|in:1,0',
@@ -189,7 +195,34 @@ return function (\DI\ContainerBuilder $containerBuilder) {
                         'size' => 'filled|string|to_type:integer|max:100|min:2',
                     ],
 
-                    \Application\Controller\AdminApi\RoleController::class.":removeRole" =>[
+                    ApiController::class.":removeApi" =>[
+                        'ids' => 'present|array'
+                    ],
+                    ApiController::class . ":saveApi" => [
+                        'name'=>'present|string|length_max:64',
+                        'status'=>'filled|integer|length_max:1',
+                        'type'=>'filled|integer|length_max:2',
+                        'permission'=>'filled|string|length_max:64',
+                        'path'=>'present|string|length_max:64',
+                    ],
+                    ApiController::class . ":updateApi" => [
+                        'name'=>'present|string|length_max:64',
+                        'path'=>'present|string|length_max:64',
+                        'id' => 'present|integer|length_max:11|min:1',
+                        'status'=>'boolean|length_max:1',
+                        'type'=>'filled|integer|length_max:2',
+                        'permission'=>'filled|string|length_max:64',
+                    ],
+                   ApiController::class.":loadApiByPage" =>[
+                       'name'=>'filled|string|length_max:64',
+                       'status'=>'filled|integer|length_max:1',
+                       'type'=>'filled|integer|length_max:2',
+                       'permission'=>'filled|string|length_max:64',
+                       'path'=>'filled|string|length_max:64',
+                        'page' => 'filled|string|to_type:integer|min:1',
+                        'size' => 'filled|string|to_type:integer|max:100|min:2',
+                    ],
+                    ApiController::class.":removeRole" =>[
                         'ids' => 'present|array'
                     ],
 

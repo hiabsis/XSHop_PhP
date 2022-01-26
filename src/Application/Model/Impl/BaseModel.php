@@ -343,14 +343,14 @@ abstract class BaseModel
      * User: 无畏泰坦
      * Date: 2021.12.17 13:23
      * Describe 自定义删除
-     * @param array $condition
+     * @param array $deleteCondition
      * @return bool
      */
-    public function deleteByCondition(array $condition): bool
+    public function deleteByCondition(array $deleteCondition): bool
     {
-        $sql = sprintf("delete from $this->tableName where %s ",implode(' and ' ,$condition['where']) );
+        $sql = sprintf("delete from $this->tableName where %s ",implode(' and ' ,$deleteCondition['where']) );
         $query = $this->conn->prepare($sql);
-        return $query->execute($condition['binds']);
+        return $query->execute($deleteCondition['binds']);
     }
 
     protected function buildQueryCondition(array $queryCondition): array

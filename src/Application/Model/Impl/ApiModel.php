@@ -25,6 +25,11 @@ class ApiModel extends BaseModel implements ApiModelInterface
         $this->tableName = 'sys_api';
         $this->redis = $redis;
     }
+    public function countApi(array $queryCondition = [])
+    {
+        $where = $this->buildQueryCondition($queryCondition);
+        return $this->medoo->count($this->tableName, $where);
+    }
 
     public function findApi(array $select = [], array $queryCondition = [], array $limit = [], bool $isAnd = true): array
     {
@@ -50,10 +55,65 @@ class ApiModel extends BaseModel implements ApiModelInterface
         }
         $where = $this->buildQueryCondition($queryCondition);
 
-        return $this->medoo->get($this->tableName,$select,$where);
+        $api =  $this->medoo->get($this->tableName,$select,$where);
+        return $api ?? [];
 
     }
 
+    /**
+     * Role: 无畏泰坦
+     * Date: 2022.01.05 17:01
+     * Describe 更新数据
+     * @param array $updateDate
+     * @param int $RoleId
+     * @return bool
+     */
+    public function updateApiById(array $updateDate = [], int $RoleId = 0): bool
+    {
+        if (array_key_exists('id', $updateDate)) {
+            throw  new ModelValidatorParamsException("非法参数 id,更新数据不能包含Id");
+        }
+        if (empty($updateDate)) {
+            return false;
+        }
+        $where['id'] = $RoleId;
+        $stmt = $this->medoo->update($this->tableName, $updateDate, $where);
+        if ($stmt === null) {
+            return false;
+        }
+        return $stmt->rowCount() > 0;
+    }
+    /**
+     * Role: 无畏泰坦
+     * Date: 2022.01.07 11:16
+     * Describe  批量删除
+     * @param array $ids
+     * @return bool
+     */
+    public function removeApiByIds(array $ids = []): bool
+    {
+        if (empty($ids)) {
+            return true;
+        }
+        $where['id'] = $ids;
+        $stmt = $this->medoo->delete($this->tableName, $where);
+        if ($stmt === null) {
+            return false;
+        }
+        return $stmt->rowCount() > 0;
+    }
+    /**
+     * Role: 无畏泰坦
+     * Date: 2022.01.07 11:18
+     * Describe 保存用户
+     * @param array $saveData
+     * @return bool
+     */
+    public function saveApi(array $saveData): bool
+    {
+        $this->medoo->insert($this->tableName, $saveData);
+        return $this->medoo->id();
+    }
     public function cacheAllApi(string $key, array $data): bool
     {
         return $this->redis->setHash($key, $data);
@@ -61,7 +121,11 @@ class ApiModel extends BaseModel implements ApiModelInterface
 
     public function getCacheApi(string $uri): array
     {
-        return $this->redis->getHash($uri);
+        $api =  $this->redis->getHash($uri);
+        if (empty($api) || $api[0] === 0){
+            return  [];
+        }
+        return $api;
     }
 
     /**
@@ -78,17 +142,21 @@ class ApiModel extends BaseModel implements ApiModelInterface
             return [];
         }
         foreach ($queryCondition as $filed => $condition) {
-            if (!empty($condition)) {
+
                 switch ($filed) {
                     case 'id':
                     case 'permission':
-                        $where[$filed] = $condition;
+                    case 'status':
+                    case 'path':
+                    case 'type':
 
+                        $where[$filed] = $condition;
                 }
-            } else {
-                throw  new ModelValidatorParamsException("查询条件为空");
-            }
+
         }
+        $where["ORDER"] = [
+            'name'  => "DESC",
+        ];
         return $where;
     }
 }

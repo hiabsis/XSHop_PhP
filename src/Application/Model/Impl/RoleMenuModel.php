@@ -72,7 +72,12 @@ class RoleMenuModel extends BaseModel implements RoleMenuModelInterface
         }
         return $stmt->rowCount() > 0;
     }
-
+      public function removeRoleMenu(array $deleteCondition): bool
+      {
+          $where = $this->buildQueryCondition($deleteCondition);
+          $stmt = $this->medoo->delete($this->tableName,$deleteCondition);
+          return  $stmt->errorCode() === null ;
+      }
 
 
     /**
@@ -82,7 +87,7 @@ class RoleMenuModel extends BaseModel implements RoleMenuModelInterface
      * @param array $saveData
      * @return bool
      */
-    public function saveRoleMenu(array $saveData): bool
+    public function saveRoleMenu(array $saveData): int
     {
         $this->medoo->insert($this->tableName, $saveData);
         return $this->medoo->id();

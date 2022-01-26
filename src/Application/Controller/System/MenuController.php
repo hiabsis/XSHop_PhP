@@ -5,7 +5,7 @@
  * Describe
  */
 
-namespace Application\Controller\AdminApi;
+namespace Application\Controller\System;
 
 use Application\Controller\BaseController;
 use Application\Domain\Response\Result;
@@ -146,6 +146,9 @@ class MenuController extends BaseController
         }
         if ($this->getParamsByName('name') !== null) {
             $menu['name'] = $this->getParamsByName('name');
+        }
+        if ($this->getParamsByName('type') !== null) {
+            $menu['type'] = $this->getParamsByName('type');
         }
         if ($this->getParamsByName('component') !== null) {
             $menu['component'] = $this->getParamsByName('component');

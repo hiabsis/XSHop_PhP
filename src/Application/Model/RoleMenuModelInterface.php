@@ -29,7 +29,7 @@ interface RoleMenuModelInterface extends BaseModelInterface
      */
     public function removeRoleMenuByIds(array $ids = []): bool;
 
-
+    public function removeRoleMenu(array $deleteCondition): bool;
 
     /**
      * User: 无畏泰坦
@@ -38,7 +38,7 @@ interface RoleMenuModelInterface extends BaseModelInterface
      * @param array $saveData
      * @return bool
      */
-    public function saveRoleMenu(array $saveData):bool;
+    public function saveRoleMenu(array $saveData):int;
 
 
 

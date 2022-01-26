@@ -5,7 +5,7 @@
  * Describe
  */
 
-namespace Application\Controller\AdminApi;
+namespace Application\Controller\System;
 
 use Application\Controller\BaseController;
 use Application\Domain\Response\Result;
@@ -49,10 +49,11 @@ class UserController extends BaseController
      */
     public function loadUserByPage(Request $request, Response $response, array $args) :Response{
         $this->hasAllRequiredParams($request,'loadUserByPage');
-        $query = $this->getQueryUserContition();
+        $query = $this->getQueryUserConditidon();
         $query[] =  number_format($this->getParamsByName('page')??-1);
         $query[] =  number_format($this->getParamsByName('size')??-1);
         $res = $this->UserService->listUserByPage($query);
+
         return $this->respondWithJson(Result::SUCCESS($res),$response);
     }
 
@@ -87,15 +88,18 @@ class UserController extends BaseController
      */
     public function saveUser(Request $request, Response $response, array $args) :Response{
         $this->hasAllRequiredParams($request ,'saveUser');
-        $user = $this->getQueryUserContition();
-        $this->UserService->saveUser($user);
+        $user = $this->getQueryUserConditidon();
+        $id = $this->UserService->saveUser($user);
+        if ($id === -1){
+            return $this->respondWithJson(Result::FAIL(message:"账号重复"),$response);
+        }
         return $this->respondWithJson(Result::SUCCESS(),$response);
     }
 
     /**
      * User: 无畏泰坦
      * Date: 2022.01.06 10:27
-     * Describe 更新菜单
+     * Describe
      * @param Request $request
      * @param Response $response
      * @param array $args
@@ -104,16 +108,36 @@ class UserController extends BaseController
      */
     public function updateUser(Request $request, Response $response, array $args) :Response{
         $this->hasAllRequiredParams($request ,'updateUser');
-        $updateUser = $this->getQueryUserContition();
+        $updateUser = $this->getQueryUserConditidon();
         $UserId = $this->getParamsByName('id');
-        $this->UserService->updateUser($updateUser,$UserId);
+        $roleIds = $this->getParamsByName('roleIds');
+        $this->UserService->updateUser($updateUser,$UserId,$roleIds);
         return $this->respondWithJson(Result::SUCCESS(),$response);
     }
 
     /**
      * User: 无畏泰坦
      * Date: 2022.01.06 10:27
-     * Describe 删除菜单
+     * Describe
+     * @param Request $request
+     * @param Response $response
+     * @param array $args
+     * @return Response
+     * @throws JsonException
+     */
+    public function editorUserStatus(Request $request, Response $response, array $args) :Response{
+        $this->hasAllRequiredParams($request ,'editorUserStatus');
+        $updateUser = $this->getQueryUserConditidon();
+        $UserId = $this->getParamsByName('id');
+        $this->UserService->updateUser($updateUser,$UserId,[]);
+
+        return $this->respondWithJson(Result::SUCCESS($updateUser['enabled']),$response);
+    }
+
+    /**
+     * User: 无畏泰坦
+     * Date: 2022.01.06 10:27
+     * Describe
      * @param Request $request
      * @param Response $response
      * @param array $args
@@ -154,11 +178,20 @@ class UserController extends BaseController
      * Describe 获取参数
      * @return array
      */
-    protected function getQueryUserContition(): array
+    protected function getQueryUserConditidon(): array
     {
         $user = [];
         if ($this->getParamsByName('username')!== null){
             $user['username'] = $this->getParamsByName('username');
+        }
+        if ($this->getParamsByName('nickname')!== null){
+            $user['nickname'] = $this->getParamsByName('nickname');
+        }
+        if ($this->getParamsByName('username')!== null){
+            $user['password'] = $this->getParamsByName('password');
+        }
+        if ($this->getParamsByName('enabled')!== null){
+            $user['enabled'] = $this->getParamsByName('enabled');
         }
 
         return $user;

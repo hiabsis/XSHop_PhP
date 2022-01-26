@@ -70,6 +70,12 @@ class UserRoleModel extends BaseModel implements UserRoleModelInterface
         }
         return $stmt->rowCount() > 0;
     }
+    public function removeUserRole(array $deleteCondition = []): bool
+    {
+        $where = $this->buildQueryCondition($deleteCondition);
+        $stmt =  $this->medoo->delete($this->tableName,$where);
+        return $stmt->errorCode() === null;
+    }
 
 
     /**

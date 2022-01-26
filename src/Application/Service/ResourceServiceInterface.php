@@ -22,5 +22,5 @@ interface ResourceServiceInterface
      */
     public function getResourceInfo(array $queryCondition):array;
 
-
+    public function removeResourceInfo(int $id,string $path):bool;
 }

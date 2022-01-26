@@ -17,7 +17,12 @@ class CommonException extends BaseException
 {
     public function __construct(string $message = "", int $code = 0, ?Throwable $previous = null,array $errorInfo = [])
     {
-        $this.$this->setErrorInfo($errorInfo);
+        $this->setErrorInfo($errorInfo);
         parent::__construct($message, $code, $previous);
+    }
+
+    public function getErrorInfo(): array
+    {
+        return $this->errorInfo ;
     }
 }

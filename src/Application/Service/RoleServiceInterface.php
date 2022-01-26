@@ -33,10 +33,10 @@ interface RoleServiceInterface
      * Date: 2022.01.05 18:12
      * Describe 更新数据
      * @param array $updateRole
-     * @param int $RoleId
+     * @param int $roleId
      * @return bool
      */
-    public function updateRole(array $updateRole, int $RoleId):bool;
+    public function updateRole(array $updateRole, int $roleId, array $menuIds):bool;
 
     /**
      * Role: 无畏泰坦

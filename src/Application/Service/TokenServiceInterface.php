@@ -22,4 +22,6 @@ interface TokenServiceInterface
 
 
     public function checkPermission(string $url,string $token):bool;
+
+    public function isOpenUrl(string $url);
 }

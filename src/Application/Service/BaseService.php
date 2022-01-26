@@ -39,7 +39,7 @@ abstract class BaseService
     }
 
 
-    protected function builderTreeResult(array $arr,int $page=0,int $size =0,int $rootId = -1,string $label= 'name'): TreeVO
+    protected function builderTreeResult(array $arr,int $page=-1,int $size =-1,int $rootId = -1,string $label= 'name'): TreeVO
     {
         $root = new TreeVO();
         $map = [];
@@ -59,7 +59,7 @@ abstract class BaseService
         $this->buildTree($map, $rootId, $root,$label);
         return  $this->handleTreeByPage($root,$page,$size);
     }
-    protected function handleTreeByPage(TreeVO $root, int $page=0,int $size =0):TreeVO
+    protected function handleTreeByPage(TreeVO $root, int $page=-1,int $size =-1):TreeVO
     {
 
         $root->total =  $root->children === null ? 0:count($root->children);
@@ -67,11 +67,11 @@ abstract class BaseService
             $root->children = [];
             return  $root;
         }
-        if (empty($page) || empty($size)) {
+        if (($page) === -1 || -1 === ($size)) {
             return $root;
         } else {
             $end = min($page * $size, count($root->children));
-            $root->children = array_slice($root->children, ($query['page'] - 1) * $query['size'], $end);
+            $root->children = array_slice($root->children, ($page- 1) * $page, $end);
             return $root;
         }
     }

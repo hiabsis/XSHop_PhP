@@ -17,9 +17,15 @@ class SystemConstants
     public static  $PRODUCT_ROOT= "#";
     public static  $HS256_KEY = "1y9eu20wfh9evyhoeasyhayhzfvewcjskfv";
     public static  $HS256 = "HS256";
-    public static  $API_TYPE_OPENING = 1;
-    public static  $API_TYPE_PERMISSON = 2;
-    public static  $API_TYPE_NOT_EXITS = 3;
-    public static  $API_STATUS_NOT = 1;
-    public static  $API_STATUS_COMMON = 0;
+    // 开发API
+    public static  $API_TYPE_OPENING = "1";
+    // 需要授权api
+    public static  $API_TYPE_PERMISSON = "2";
+    // api 不存在
+    public static  $API_TYPE_NOT_EXITS = "3";
+    public static  $API_STATUS_NOT = "0";
+    public static  $API_STATUS_COMMON = "1";
+    public static  $TOKEN_STRING = "TOKEN";
+
+
 }

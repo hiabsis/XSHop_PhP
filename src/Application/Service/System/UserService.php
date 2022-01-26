@@ -20,6 +20,7 @@ use Application\Model\ApiMenuModelInterface;
 use Application\Model\ApiModelInterface;
 use Application\Model\MenuModelInterface;
 use Application\Model\RoleMenuModelInterface;
+use Application\Model\RoleModelInterface;
 use Application\Model\UserModelInterface;
 use Application\Model\UserRoleModelInterface;
 use Application\Service\BaseService;
@@ -40,11 +41,13 @@ class UserService extends  BaseService implements UserServiceInterface
     private $roleMenuModel;
     private $apiModel;
     private $apiMenuModel;
+    private $roleModel;
     public function __construct(UserModelInterface $userModel,
                                 UserRoleModelInterface $userRoleModel,
                                 MenuModelInterface $menuModel,
                                 ApiMenuModelInterface $apiMenuModel,
                                 ApiModelInterface $apiModel,
+                                RoleModelInterface $roleModel,
                                 RoleMenuModelInterface $roleMenuModel)
     {
         $this->userModel = $userModel;
@@ -53,6 +56,7 @@ class UserService extends  BaseService implements UserServiceInterface
         $this->roleMenuModel = $roleMenuModel;
        $this->apiMenuModel=  $apiMenuModel;
        $this->apiModel = $apiModel;
+       $this->roleModel = $roleModel;
     }
 
 
@@ -69,6 +73,23 @@ class UserService extends  BaseService implements UserServiceInterface
         $total = $this->userModel->countUser($query);
         $pageParams = $this->getPageParams($query,$total);
         $data = $this->userModel->findUser(queryCondition: $query,limit: $pageParams);
+        foreach ($data as  &$d){
+            if ($d['enabled'] === 1){
+                $d['enabled'] = true;
+            }else{
+                $d['enabled'] = false;
+            }
+            // 查找用户所对应的角色
+            $userRoles = $this->userRoleModel->findUserRole(queryCondition: ['user_id'=>$d['id']]);
+            if (!empty($userRoles)){
+                $roles = $this->roleModel->findRole(select: ['id','name'],queryCondition: ['id'=>array_column($userRoles,'role_id')]);
+                $d['roles'] = $roles;
+            }else{
+                $d['roles'] = [];
+            }
+
+        }
+
         return ['total' => $total,'data' => $data];
     }
 
@@ -97,6 +118,17 @@ class UserService extends  BaseService implements UserServiceInterface
         $user = $this->encodePassword($password);
         $user['username'] = $username;
        return $this->userModel->saveUser($user);
+    }
+
+    public function saveUser(array $user):int
+    {
+        // 是否存在同名的用户
+        $queryUser = $this->userModel->getUser(query: ['username'=>$user['username']]);
+        if (empty($queryUser)){
+            return $this->userModel->saveUser($user);
+        }
+       return -1;
+        // TODO: Implement saveUser() method.
     }
 
     /**
@@ -137,9 +169,23 @@ class UserService extends  BaseService implements UserServiceInterface
      * @param $userId
      * @return bool
      */
-    public function updateUser(array $user,$userId):bool
+    public function updateUser(array $user, $userId, $roleIds):bool
     {
-        return $this->userModel->updateUserById($user,$userId);
+
+        $this->userModel->updateUserById($user,$userId);
+
+        $this->userRoleModel->removeUserRole(deleteCondition: ['user_id' => $userId]);
+        if (!empty($roleIds)){
+            $userRoles = [];
+            foreach ($roleIds as $id){
+                $userRole = [];
+                $userRole['user_id' ] = $userId;
+                $userRole['role_id' ] = $id['id'];
+                $userRoles[] = $userRole;
+            }
+            $this->userRoleModel->saveUserRole($userRoles);
+        }
+        return  true;
     }
 
     /**
@@ -276,32 +322,36 @@ class UserService extends  BaseService implements UserServiceInterface
             $roleIds[] = $userRole['role_id'];
         }
         $res['role_ids'] = json_encode($roleIds, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);;
-        $roleMenus = $this->roleMenuModel->findRoleMenu(select:['menu_id'],queryCondition: ['role_id'=> $roleIds]);
-        $menuIds = [];
-        foreach ($roleMenus as $roleMenu){
-            $menuIds[] = $roleMenu['menu_id'];
-        }
-        $menus = $this->menuModel->findMenu(queryCondition: ["id"=>$menuIds]);
-        // 处理菜单项的结构
-        $menusTree =   $this->builderTreeResult($menus);
-        $res['menus'] = json_encode($menusTree, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
-        // 查询出这些页面需要的权限
-        $apiMenus = $this->apiMenuModel->findApiMenu(queryCondition:['menu_id'=>$menuIds]);
-        $apiIds = [];
-        foreach ($apiMenus as $apiMenus){
-            $apiIds[] = $apiMenus['api_id'];
-        }
-        if (empty($apiIds)){
-            $res['permission'] = [];
-        }else{
-            $permissions = $this->apiModel->findApi(select:['permission'],queryCondition:['id'=>$apiIds]);
-            $p = [];
-            foreach ($permissions as $permission){
-                $p[] = $permission['permission'];
+        if (!empty($roleIds)){
+            $roleMenus = $this->roleMenuModel->findRoleMenu(select:['menu_id'],queryCondition: ['role_id'=> $roleIds]);
+            $menuIds = [];
+            foreach ($roleMenus as $roleMenu){
+                $menuIds[] = $roleMenu['menu_id'];
             }
-            $p = array_unique($p);
-            $res['permissions'] =  json_encode($p, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+            $menus = $this->menuModel->findMenu(queryCondition: ["id"=>$menuIds,'type'=>[1,2]]);
+            $res['routerList'] = json_encode($this->menuModel->findMenu(queryCondition: ["id"=>$menuIds,'type'=>2]), JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+            // 处理菜单项的结构
+            $menusTree =   $this->builderTreeResult($menus);
+            $res['menus'] = json_encode($menusTree, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+            // 查询出访问这些页面需要的后台权限
+            $apiMenus = $this->apiMenuModel->findApiMenu(queryCondition:['menu_id'=>$menuIds]);
+            $apiIds = [];
+            foreach ($apiMenus as $apiMenus){
+                $apiIds[] = $apiMenus['api_id'];
+            }
+            if (empty($apiIds)){
+                $res['permission'] = [];
+            }else{
+                $permissions = $this->apiModel->findApi(select:['permission'],queryCondition:['id'=>$apiIds]);
+                $p = [];
+                foreach ($permissions as $permission){
+                    $p[] = $permission['permission'];
+                }
+                $p = array_unique($p);
+                $res['permissions'] =  json_encode($p, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+            }
         }
+
 
         return $res;
     }

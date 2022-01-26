@@ -61,7 +61,7 @@ interface UserServiceInterface
      * @param $userId
      * @return bool
      */
-    public function updateUser(array $user,$userId):bool;
+    public function updateUser(array $user, $userId,array $roleIds):bool;
 
     /**
      * @author     ：无畏泰坦
@@ -99,6 +99,7 @@ interface UserServiceInterface
      */
     public function register(string $username,string $password):int;
 
+    public function saveUser(array $user):int;
     /**
      * @author     ：无畏泰坦
      * @date       ：Created in 2022.01.13 17:30

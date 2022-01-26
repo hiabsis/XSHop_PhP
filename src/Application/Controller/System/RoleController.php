@@ -5,7 +5,7 @@
  * Describe
  */
 
-namespace Application\Controller\AdminApi;
+namespace Application\Controller\System;
 
 use Application\Controller\BaseController;
 use Application\Domain\Response\Result;
@@ -104,8 +104,9 @@ class RoleController extends BaseController
     public function updateRole(Request $request, Response $response, array $args) :Response{
         $this->hasAllRequiredParams($request ,'updateRole');
         $updateRole = $this->getQueryRoleCondition();
-        $RoleId = $this->getParamsByName('id');
-        $this->RoleService->updateRole($updateRole,$RoleId);
+        $roleId = $this->getParamsByName('id');
+        $menuIds = $this->getParamsByName('menuIds');
+        $this->RoleService->updateRole($updateRole,$roleId,$menuIds);
         return $this->respondWithJson(Result::SUCCESS(),$response);
     }
 

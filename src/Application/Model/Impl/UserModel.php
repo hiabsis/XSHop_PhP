@@ -159,7 +159,8 @@ class UserModel extends BaseModel implements UserModelInterface
         if (empty($select)){
             $select = '*';
         }
-       return  $this->medoo->get($this->tableName,$select,$query);
+        $user=  $this->medoo->get($this->tableName,$select,$query);
+        return  empty($user) ? [] : $user;
     }
 
     /**

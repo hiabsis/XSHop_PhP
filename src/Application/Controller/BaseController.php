@@ -4,6 +4,7 @@ namespace Application\Controller;
 
 use App\Application\Actions\ActionPayload;
 use Application\Constant\ErrorEnum;
+use Application\Constant\SystemConstants;
 use Application\Domain\Response\Result;
 use Application\Domain\Settings\ValidatorRuleInterface;
 use Application\Exception\CommonException;
@@ -64,8 +65,12 @@ abstract class BaseController
      * @param string $method  校验规则名称
      */
     protected function hasAllRequiredParams(Request $request, string $method){
-        $this->authentication($request);
+        // 授权认证
+        if (!$this->authentication($request)){
+            throw new CommonException(errorInfo: ErrorEnum::$ERROR_502);
+        }
         $data = [];
+//        $valu =$_SERVER['HTTP_X_FORWARDED_FOR'];
         $method = $this->class.":".$method;
         if (!empty($request->getUploadedFiles()) ){
             $data = array_merge($data,$request->getUploadedFiles()) ;
@@ -118,6 +123,10 @@ abstract class BaseController
     {
         // 获取访问的URL
         $url =  $request->getUri()->getPath();
+
+        if ($this->tokenService->isOpenUrl($url)){
+            return  true;
+        }
         $token = $this->getRequestToken($request);
         return  $this->tokenService->checkPermission($url,$token);
     }
@@ -127,8 +136,8 @@ abstract class BaseController
 
     public function getRequestToken(Request $request):string
     {
-        $token = $request->getCookieParams()['token'];
-        if ($token === null || $token === "" || $token === 'undefined'){
+        $token = $request->getCookieParams()[SystemConstants::$TOKEN_STRING];
+         if ($token === null || $token === "" || $token === 'undefined'){
             // 登入过期
             throw new CommonException(errorInfo: ErrorEnum::$ERROR_20011);
         }

@@ -6,7 +6,8 @@ use Throwable;
 
 abstract class BaseException extends \RuntimeException implements LoggerException
 {
-    private $errorInfo;
+    protected $errorInfo;
+
     public function setErrorInfo(array $errorInfo)
     {
         $this->errorInfo = $errorInfo;

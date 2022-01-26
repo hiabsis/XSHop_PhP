@@ -29,7 +29,14 @@ interface UserRoleModelInterface extends BaseModelInterface
      */
     public function removeUserRoleByIds(array $ids = []): bool;
 
-
+    /**
+     * User: 无畏泰坦
+     * Date: 2022.01.07 11:16
+     * Describe  批量删除
+     * @param array $queryCondition
+     * @return bool
+     */
+    public function removeUserRole( array $deleteCondition = []): bool;
 
     /**
      * User: 无畏泰坦

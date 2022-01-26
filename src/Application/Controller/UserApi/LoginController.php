@@ -25,13 +25,15 @@ class LoginController extends BaseController
     /**
      * @var LoginServiceInterface
      */
-    private LoginServiceInterface $loginService;
+    private  $loginService;
+    private  $userService;
 
 
-    public function __construct(LoggerInterface $logger, ValidatorRuleInterface $rule, TokenServiceInterface $tokenService,LoginServiceInterface $loginService)    {
+    public function __construct(LoggerInterface $logger, ValidatorRuleInterface $rule, TokenServiceInterface $tokenService,LoginServiceInterface $loginService,UserServiceInterface $userService)    {
         parent::__construct($logger, $rule, $tokenService);
         $this->class = self::class;
         $this->loginService = $loginService;
+        $this->userService = $userService;
 
     }
 
@@ -53,13 +55,14 @@ class LoginController extends BaseController
         $username = $this->getParamsByName('username');
         $password = $this->getParamsByName('password');
         $jwtToken = $this->loginService->authLogin($username,$password);
-        return $this->respondWithJson(Result::SUCCESS($jwtToken,"登入成功"),$response);
+        return $this->respondWithJson(Result::SUCCESS(message: $jwtToken),$response);
     }
 
 
     public function getUserInfo(Request $request, Response $response, array $args) :Response
     {
         $jwtToken = $this->getRequestToken($request);
+
         $userInfo =  $this->tokenService->getUserInfo($jwtToken);
         return $this->respondWithJson(Result::SUCCESS($userInfo),$response);
     }
@@ -88,12 +91,12 @@ class LoginController extends BaseController
         $this->hasAllRequiredParams($request,"register");
         $username = $this->getParamsByName('username');
         $password = $this->getParamsByName('password');
-        $exist = $this->userSerice->isExist($username);
+        $exist = $this->userService->isExist($username);
         if ($exist) {
             return $this->respondWithJson(Result::FAIL(message: "用户名重复"),$response);
         }
 
-        $id = $this->userSerice->register($username,$password);
+        $id = $this->userService->register($username,$password);
         if (empty($id)){
             return $this->respondWithJson(Result::FAIL(message: "注册失败"),$response);
         }

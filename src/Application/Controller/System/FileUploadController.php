@@ -8,6 +8,7 @@ use Application\Domain\System\Resource;
 use Application\Helper\ClassHelper;
 use \Application\Helper\UploadHelper;
 use Application\Service\ResourceServiceInterface;
+use Application\Service\TokenServiceInterface;
 use JsonException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -20,12 +21,13 @@ class FileUploadController extends \Application\Controller\BaseController
      * @var ResourceServiceInterface
      */
     private $resourceService;
-    public function __construct(ResourceServiceInterface $resourceService, LoggerInterface $logger, ValidatorRuleInterface $rule)
-    {
-        $this->resourceService = $resourceService;
-        parent::__construct($logger, $rule);
-        $this->class = self::class;
-    }
+
+   public function __construct(LoggerInterface $logger, ValidatorRuleInterface $rule, TokenServiceInterface $tokenService,ResourceServiceInterface $resourceService)
+   {
+       parent::__construct($logger, $rule, $tokenService);
+       $this->resourceService = $resourceService;
+   }
+
 
     /**
      * 图片上传
@@ -36,7 +38,7 @@ class FileUploadController extends \Application\Controller\BaseController
      * @throws JsonException
      */
     public function uploadImg(Request $request, Response $response, array $args): Response
-    {
+     {
         $uploadedFiles = $request->getUploadedFiles();
         $uploadedImg = $uploadedFiles['file'];
         $data = UploadHelper::saveImg($uploadedImg);
@@ -64,6 +66,21 @@ class FileUploadController extends \Application\Controller\BaseController
         $res = $this->resourceService->getResourceInfo($queryCondition);
         return $this->respondWithJson(Result::SUCCESS($res), $response);
     }
+
+    /**
+     * @throws JsonException
+     */
+    public function removeResourceInfo(Request $request, Response $response, array $args):Response
+    {
+        if (empty($this->getParamsByName('id'))){
+              return $this->respondWithJson(Result::FAIL(), $response);
+        }
+        $id = (int)($this->getParamsByName('id'));
+        $path = (int)($this->getParamsByName('path'));
+        $res = $this->resourceService->removeResourceInfo($id,$path);
+        return $this->respondWithJson(Result::SUCCESS($res), $response);
+    }
+
 
 
 }

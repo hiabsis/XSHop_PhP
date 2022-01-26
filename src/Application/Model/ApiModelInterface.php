@@ -11,20 +11,15 @@ namespace Application\Model;
 
 interface ApiModelInterface
 {
-    /**
-     * Role: 无畏泰坦
-     * Date: 2022.01.05 9:23
-     * Describe 查找用户
-     * @param array $select
-     * @param array $queryCondition
-     * @param array $limit
-     * @param bool $isAnd
-     * @return mixed
-     */
+
     public function findApi(array $select = [], array $queryCondition = [], array $limit = [], bool $isAnd = true):array;
-
+    public function countApi(array $queryCondition = []);
     public function getApi(array $select = [], array $queryCondition = []);
+    public function updateApiById(array $updateDate = [], int $RoleId = 0): bool;
     public function cacheAllApi(string $key,array $data);
-
+    public function removeApiByIds(array $ids = []): bool;
+    public function saveApi(array $saveData): bool;
     public function getCacheApi(string $uri):array;
+
+
 }

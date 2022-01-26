@@ -8,6 +8,8 @@
 namespace Application\Service\System;
 use Application\Domain\VO\TreeVO;
 use Application\Exception\ServiceValidatorParamsException;
+use Application\Model\ApiMenuModelInterface;
+use Application\Model\ApiModelInterface;
 use Application\Model\MenuModelInterface;
 use Application\Service\BaseService;
 use Application\Service\MenuServiceInterface;
@@ -23,8 +25,19 @@ class MenuService extends BaseService implements MenuServiceInterface
      * @var MenuModelInterface
      */
     private  $menuModel;
-    public function __construct(MenuModelInterface $menuModel)
+    /**
+     * @var ApiMenuModelInterface
+     */
+    private  $apiMenuModel;
+    /**
+     * @var ApiModelInterface
+     */
+    private  $apiModel;
+    public function __construct(MenuModelInterface $menuModel,ApiMenuModelInterface $apiMenuModel ,ApiModelInterface $apiModel)
+
     {
+        $this->apiMenuModel = $apiMenuModel;
+        $this->apiModel = $apiModel;
         $this->menuModel = $menuModel;
     }
 
@@ -39,6 +52,17 @@ class MenuService extends BaseService implements MenuServiceInterface
     public function listMenuByPage(int $page=-1,int $size = -1):TreeVO
     {
         $allMenu = $this->menuModel->findMenu();
+        foreach ($allMenu as &$menu){
+            $apiMenus = $this->apiMenuModel->findApiMenu(select: ['api_id'],queryCondition: ['menu_id'=>$menu['id']]);
+            $menu['permission'] = [];
+            if (!empty($apiMenus)){
+                $apiIds = [];
+                foreach ($apiMenus as $apiMenu){
+                    $apiIds[] = $apiMenu['api_id'];
+                }
+                $menu['permission']  = $this->apiModel->findApi(select: ['name','permission','path'] ,queryCondition: ['id'=>$apiIds]);
+            }
+        }
         return $this->builderTreeResult($allMenu,$page,$size,label: 'name_zh');
     }
     /**

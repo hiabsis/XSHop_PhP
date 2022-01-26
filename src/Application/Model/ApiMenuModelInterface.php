@@ -23,4 +23,22 @@ interface ApiMenuModelInterface
      */
     public function findApiMenu(array $select = [], array $queryCondition = [], array $limit = [], bool $isAnd = true):array;
 
+    /**
+     * User: 无畏泰坦
+     * Date: 2022.01.07 11:16
+     * Describe  批量删除
+     * @param array $deleteCondition
+     * @return bool
+     */
+    public function removeApiMenu(array $deleteCondition ): bool;
+
+
+    /**
+     * User: 无畏泰坦
+     * Date: 2022.01.05 9:26
+     * Describe 保存用户信息
+     * @param array $saveData
+     * @return bool
+     */
+    public function saveApiMenu(array $saveData):bool;
 }

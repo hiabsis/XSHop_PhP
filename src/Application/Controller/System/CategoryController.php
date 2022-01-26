@@ -1,10 +1,9 @@
 <?php
 
-namespace Application\Controller\Product;
+namespace Application\Controller\System;
 
 use Application\Controller\BaseController;
 use Application\Domain\Product\Category;
-use Application\Domain\Product\ProductInfo;
 use Application\Domain\Product\ProductRelatedResource;
 use Application\Domain\Response\Result;
 use Application\Domain\Settings\ValidatorRuleInterface;
@@ -12,12 +11,9 @@ use Application\Helper\ValidatorHelper;
 use Application\Service\CategoryServiceInterface;
 use Application\Service\TokenServiceInterface;
 use JsonException;
-use Psr\Log\LoggerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Routing\RouteContext;
-use function DI\string;
-use function DI\value;
+use Psr\Log\LoggerInterface;
 
 class CategoryController extends BaseController
 {

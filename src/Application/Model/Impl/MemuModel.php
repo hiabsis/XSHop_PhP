@@ -157,6 +157,8 @@ class MemuModel extends BaseModel implements MenuModelInterface
             if (!empty($condition)) {
                 switch ($filed)
                 {
+                    case 'id':
+                    case 'type':
                     case 'name_zh':
                     case 'path':
                     case 'name':

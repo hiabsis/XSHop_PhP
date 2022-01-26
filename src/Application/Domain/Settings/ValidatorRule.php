@@ -7,12 +7,8 @@
 
 namespace Application\Domain\Settings;
 
-use Application\Controller\Product\CategoryController;
-use Application\Controller\Product\ProductController;
 use Application\Controller\System\LoginController;
-use Application\Exception\ValidatorParamsException;
 use Application\Exception\ValidatorRulesNotFoundException;
-use function DI\string;
 
 /**
  * Created on 2021.12.15 15:07

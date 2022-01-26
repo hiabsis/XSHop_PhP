@@ -11,5 +11,6 @@ return function (\DI\ContainerBuilder $containerBuilder) {
         \Application\Service\MenuServiceInterface::class => \DI\autowire(\Application\Service\System\MenuService::class),
         \Application\Service\TokenServiceInterface::class => \DI\autowire(\Application\Service\System\TokenService::class),
         \Application\Service\LoginServiceInterface::class => \DI\autowire(\Application\Service\System\LoginService::class),
+        \Application\Service\ApiServiceInterface::class => \DI\autowire(\Application\Service\System\ApiService::class),
     ]);
 };

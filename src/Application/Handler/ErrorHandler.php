@@ -5,6 +5,7 @@ namespace Application\Handler;
 
 
 use Application\Exception\BaseException;
+use Application\Exception\CommonException;
 use Application\Exception\HttpErrorStatus;
 use Application\Exception\SystemErrorInfo;
 use Exception;
@@ -64,7 +65,12 @@ class ErrorHandler extends SlimErrorHandler
             'msg' => '系统异常'
         ];
         $status = 500;
-        if ($exception instanceof BaseException){
+        if ($exception instanceof  CommonException){
+            $logInfo = SystemErrorInfo::getErrorLogInfo($exception);
+            $logInfo['msg'] = $exception->getMessage();
+            $logInfo['position'] = $exception->getFile() . ' ' . $exception->getLine();
+            $errorInfo = $exception->getErrorInfo();
+        } else if ($exception instanceof BaseException){
             $logInfo = $exception->getLoggerInfo();
             $errorInfo = $exception->getErrorInfo();
         }else if ($exception instanceof HttpException ){
@@ -79,11 +85,11 @@ class ErrorHandler extends SlimErrorHandler
             $errorInfo = SystemErrorInfo::getErrorInfo($exception);
         }
 
-        $this->logger->error(json_encode($logInfo, JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE));
-        $encodedPayload = json_encode($logInfo, JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE);
+        $this->logger->error(json_encode($errorInfo, JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE));
+        $encodedPayload = json_encode($errorInfo, JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE);
         $response = $this->responseFactory->createResponse($status);
         $response->getBody()->write($encodedPayload);
-        return $response->withHeader('Content-Type', 'application/json');
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
 }

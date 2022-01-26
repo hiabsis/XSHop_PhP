@@ -1,22 +1,16 @@
 <?php
 
-namespace Application\Controller\Product;
+namespace Application\Controller\System;
 
 use Application\Controller\BaseController;
-
-use Application\Domain\Product\Category;
 use Application\Domain\Product\Product;
 use Application\Domain\Product\ProductInfo;
 use Application\Domain\Product\ProductRelatedResource;
 use Application\Domain\Response\Result;
 use Application\Domain\Settings\ValidatorRuleInterface;
-use Application\Domain\System\Resource;
-use Application\Helper\ClassHelper;
 use Application\Helper\ValidatorHelper;
-use Application\Service\CategoryServiceInterface;
 use Application\Service\ProductServiceInterface;
 use Application\Service\TokenServiceInterface;
-use FangStarNet\PHPValidator\Validator;
 use JsonException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
