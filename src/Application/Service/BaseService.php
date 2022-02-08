@@ -29,6 +29,9 @@ abstract class BaseService
      */
     protected function getPageParams(array $query, int $total): array
     {
+        if ($query['page'] === "-1"||  $query['size'] ==="-1"){
+            return  [];
+        }
         $limit = [];
         $limit[] = ($query['page'] - 1) * $query['size'];
         $limit[] = $query['size'];

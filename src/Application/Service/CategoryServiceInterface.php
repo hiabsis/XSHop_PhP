@@ -20,6 +20,7 @@ interface CategoryServiceInterface
     /**
      * 更新分类
      * @param Category $category
+     * @param array $resources
      * @return mixed
      */
     public function updateCategory(Category $category,array $resources):bool;

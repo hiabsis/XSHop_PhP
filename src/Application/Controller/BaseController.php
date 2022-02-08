@@ -31,6 +31,8 @@ abstract class BaseController
     protected $params;
     protected $class;
     protected  $tokenService;
+    protected $request;
+
     public function __construct(LoggerInterface $logger,ValidatorRuleInterface $rule,TokenServiceInterface $tokenService)
     {
         $this->logger = $logger;
@@ -69,6 +71,7 @@ abstract class BaseController
         if (!$this->authentication($request)){
             throw new CommonException(errorInfo: ErrorEnum::$ERROR_502);
         }
+        $this->request = $request;
         $data = [];
 //        $valu =$_SERVER['HTTP_X_FORWARDED_FOR'];
         $method = $this->class.":".$method;
@@ -136,14 +139,21 @@ abstract class BaseController
 
     public function getRequestToken(Request $request):string
     {
-        $token = $request->getCookieParams()[SystemConstants::$TOKEN_STRING];
+        $token = $request->getCookieParams()[SystemConstants::$TOKEN_KEY];
          if ($token === null || $token === "" || $token === 'undefined'){
             // 登入过期
-            throw new CommonException(errorInfo: ErrorEnum::$ERROR_20011);
+            throw new CommonException(errorInfo: ErrorEnum::$ERROR_20002);
         }
 
         return $token;
     }
+    public function getLoginUserInfo():array
+    {
+        $token = $this->getRequestToken($this->request);
+        return $this->tokenService->getUserInfo($token);
+    }
+
+
 
 
 

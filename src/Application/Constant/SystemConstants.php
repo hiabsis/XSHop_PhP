@@ -15,7 +15,9 @@ class SystemConstants
     // 文件访问的前缀
     public static $FILE_ACCESS_PATH_PREFIX = "/UploadFile/";
     public static  $PRODUCT_ROOT= "#";
+    // 加密的密钥
     public static  $HS256_KEY = "1y9eu20wfh9evyhoeasyhayhzfvewcjskfv";
+    // 加密算法
     public static  $HS256 = "HS256";
     // 开发API
     public static  $API_TYPE_OPENING = "1";
@@ -23,9 +25,12 @@ class SystemConstants
     public static  $API_TYPE_PERMISSON = "2";
     // api 不存在
     public static  $API_TYPE_NOT_EXITS = "3";
+    // api 禁用
     public static  $API_STATUS_NOT = "0";
-    public static  $API_STATUS_COMMON = "1";
-    public static  $TOKEN_STRING = "TOKEN";
+    // 开放api
+    public static  $API_STATUS_OPENING = "1";
+    // REDIS中token的值
+    public static  $TOKEN_KEY = "TOKEN";
 
 
 }

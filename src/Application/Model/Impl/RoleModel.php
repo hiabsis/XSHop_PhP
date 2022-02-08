@@ -103,9 +103,9 @@ class RoleModel extends BaseModel implements RoleModelInterface
      * Date: 2022.01.07 11:18
      * Describe 保存用户
      * @param array $saveData
-     * @return bool
+     * @return int
      */
-    public function saveRole(array $saveData): bool
+    public function saveRole(array $saveData): int
     {
         $this->medoo->insert($this->tableName, $saveData);
         return $this->medoo->id();

@@ -10,6 +10,7 @@ use Application\Domain\Settings\ValidatorRuleInterface;
 use Application\Service\LoginServiceInterface;
 use Application\Service\TokenServiceInterface;
 use Application\Service\UserServiceInterface;
+use JetBrains\PhpStorm\Pure;
 use JsonException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -29,7 +30,7 @@ class LoginController extends BaseController
     private  $userService;
 
 
-    public function __construct(LoggerInterface $logger, ValidatorRuleInterface $rule, TokenServiceInterface $tokenService,LoginServiceInterface $loginService,UserServiceInterface $userService)    {
+    #[Pure] public function __construct(LoggerInterface $logger, ValidatorRuleInterface $rule, TokenServiceInterface $tokenService, LoginServiceInterface $loginService, UserServiceInterface $userService)    {
         parent::__construct($logger, $rule, $tokenService);
         $this->class = self::class;
         $this->loginService = $loginService;
@@ -41,7 +42,7 @@ class LoginController extends BaseController
     /**
      * User: 无畏泰坦
      * Date: 2022.01.07 11:41
-     * Describe 登入
+     * Describe 用户授权
      * @param Request $request
      * @param Response $response
      * @param array $args
@@ -59,6 +60,14 @@ class LoginController extends BaseController
     }
 
 
+    /**
+     * @author     ：无畏泰坦
+     * @date       ：Created in 2022.01.27 10:50
+     * @description：获取用户信息
+     * @modified By：
+     * @version:     1.0
+     *  @throws JsonException
+     */
     public function getUserInfo(Request $request, Response $response, array $args) :Response
     {
         $jwtToken = $this->getRequestToken($request);
@@ -79,11 +88,12 @@ class LoginController extends BaseController
     }
 
     /**
+     * @throws JsonException
+     * @version:     1.0
      * @author     ：无畏泰坦
      * @date       ：Created in 2022.01.13 14:13
      * @description：${description}
      * @modified By：用户注册
-     * @version:     1.0
      */
     public function register(Request $request, Response $response, array $args) :Response
     {

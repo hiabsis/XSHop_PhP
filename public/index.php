@@ -66,15 +66,18 @@ $request = $serverRequestCreator->createServerRequestFromGlobals();
 
 // Create Error Handler
 $responseFactory = $app->getResponseFactory();
-$errorHandler = new \Application\Handler\ErrorHandler($callableResolver, $responseFactory);
-$errorHandler->setLogger($container->get(\Psr\Log\LoggerInterface::class));
-//
-//$shutdownHandler = new \Application\Handler\ShutdownHandler($request, $errorHandler, $displayErrorDetails);
-//register_shutdown_function($shutdownHandler);
+if(false){
+    $errorHandler = new \Application\Handler\ErrorHandler($callableResolver, $responseFactory);
+    $errorHandler->setLogger($container->get(\Psr\Log\LoggerInterface::class));
+
+    //$shutdownHandler = new \Application\Handler\ShutdownHandler($request, $errorHandler, $displayErrorDetails);
+    //register_shutdown_function($shutdownHandler);
 
 
-$errorMiddleware = $app->addErrorMiddleware($displayErrorDetails, $logError, $logErrorDetails);
-$errorMiddleware->setDefaultErrorHandler($errorHandler);
+    $errorMiddleware = $app->addErrorMiddleware($displayErrorDetails, $logError, $logErrorDetails);
+    $errorMiddleware->setDefaultErrorHandler($errorHandler);
+}
+
 
 // Run App & Emit Response
 $response = $app->handle($request);

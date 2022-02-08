@@ -178,6 +178,14 @@ class UserModel extends BaseModel implements UserModelInterface
         // TODO: Implement cacheUserInfo() method.
     }
 
+    public function updateUserScore($score,$userId,$token){
+        // 更新数据库中的数据
+        $this->updateUserById(['score'=>$score],$userId);
+        // 更新缓存中的数据
+        $this->redis->setHash($token,['score'=>$score]);
+
+
+    }
     public function getCacheUserInfo(string $token):array
     {
         return $this->redis->getHash($token);

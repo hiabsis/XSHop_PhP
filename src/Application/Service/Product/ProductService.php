@@ -345,7 +345,7 @@ class ProductService implements \Application\Service\ProductServiceInterface
      * Describe  获取商品的展示图
      * @return array
      */
-    private function getProductShowImgAccessPath(int $productId): string
+    public function getProductShowImgAccessPath(int $productId): string
     {
        $resource =  $this->productRelatedResourceModel->findProductResourceByProductIdAndType($productId,ProductConstants::$PRODUCT_IMAGE_TYPE_SHOW);
        if (empty($resource)){

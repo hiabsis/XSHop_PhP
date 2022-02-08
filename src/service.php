@@ -12,5 +12,8 @@ return function (\DI\ContainerBuilder $containerBuilder) {
         \Application\Service\TokenServiceInterface::class => \DI\autowire(\Application\Service\System\TokenService::class),
         \Application\Service\LoginServiceInterface::class => \DI\autowire(\Application\Service\System\LoginService::class),
         \Application\Service\ApiServiceInterface::class => \DI\autowire(\Application\Service\System\ApiService::class),
+        \Application\Service\CollectionServiceInterface::class => \DI\autowire(\Application\Service\System\CollectionService::class),
+        \Application\Service\CartServiceInterface::class => \DI\autowire(\Application\Service\System\CartService::class),
+        \Application\Service\OrderServiceInterface::class => \DI\autowire(\Application\Service\System\OrderService::class),
     ]);
 };

@@ -83,7 +83,7 @@ interface UserModelInterface extends BaseModelInterface
      * @version:     $version$
      */
     public function cacheUserInfo(array $user,string $token);
-
+    public function updateUserScore($score,$userId,$token);
     /**
      * @author     ：无畏泰坦
      * @date       ：Created in 2022.01.13 11:38

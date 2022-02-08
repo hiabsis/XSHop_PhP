@@ -1,14 +1,8 @@
 <?php
 
-use Application\Controller\System\{ProductController};
-use Application\Controller\System\{CategoryController, FileUploadController};
-use Application\Controller\System\ApiController;
-use Application\Controller\System\MenuController;
-use Application\Controller\System\RoleController;
-use Application\Controller\System\UserController;
-use Application\Controller\UserApi\LoginController;
+use Application\Controller\System\{UserController,RoleController,MenuController,CategoryController,ApiController, ProductController,FileUploadController};
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
-
+use Application\Controller\UserApi\{CartController,OrderController,CollectionController,LoginController};
 return static function (\Slim\App $app) {
     // 商城可以访问的模块
     $app->group('/user', function (Group $group) {
@@ -24,6 +18,26 @@ return static function (\Slim\App $app) {
         $group->get('/home/category', CategoryController::class . ":getIndexCategory");
         // 获取首页轮播商品
         $group->get('/home/banner', ProductController::class . ":listProductCarousel");
+        // 商品详情
+        $group->get('/product/detail', ProductController::class . ":detailProduct");
+        // 商品收藏-添加
+        $group->post('/collect/add', CollectionController::class . ":saveCollection");
+        // 商品收藏-列表
+        $group->get('/collect/page', CollectionController::class . ":listCollection");
+        // 商品收藏-删除
+        $group->get('/collect/delete', CollectionController::class . ":removeCollection");
+
+        // 商品收藏-添加
+        $group->post('/cart/add', CartController::class . ":saveCart");
+        // 商品收藏-列表
+        $group->get('/cart/page', CartController::class . ":listCart");
+        // 商品收藏-删除
+        $group->get('/cart/delete', CartController::class . ":removeCart");
+        $group->post('/cart/update', CartController::class . ":updateCart");
+        // 订单-添加
+        $group->post('/order/add', OrderController::class . ":saveOrder");
+        // 订单-查询
+        $group->get('/order/page', OrderController::class . ":pageOrder");
 
     });
     // 后台管理系统
@@ -37,7 +51,6 @@ return static function (\Slim\App $app) {
         // 商品模块-更新
         $group->put('/product/edit', ProductController::class . ":putProduct");
         // 商品模块-详情
-
         $group->get('/product/detail', ProductController::class . ":detailProduct");
         // 商品分类-删除
         $group->delete('/category/remove/{id}', CategoryController::class . ":removeCategory");
@@ -76,7 +89,7 @@ return static function (\Slim\App $app) {
 
 
         // 接口模块-删除
-        $group->delete('/permission/remove/{id}', ApiController::class . ":removeRole");
+        $group->delete('/permission/remove', ApiController::class . ":removeRole");
         // 接口模块-保存
         $group->post('/permission/add', ApiController::class . ":saveApi");
         // 接口模块-列表

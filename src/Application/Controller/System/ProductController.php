@@ -115,6 +115,8 @@ class ProductController extends BaseController
         $this->validator($request);
         // 获取参数
         $product = $this->getParamsByClazz(Product::class);
+        $loginUser = $this->getLoginUserInfo();
+        $product->userId = $loginUser['user_id'];
         $resources = $this->getParamsByNameAndClazz('resources', ProductRelatedResource::class);
         $productInfo = $this->getParamsByNameAndClazz('productInfo', ProductInfo::class);
         // 保存商品
@@ -204,7 +206,10 @@ class ProductController extends BaseController
             $queryCondition['parentId'] = $this->getParamsByName('productName');
         }
         if (!empty( $this->getParamsByName('productStatus'))){
-            $queryCondition['categoryName'] = $this->getParamsByName('productStatus');
+            $queryCondition['productStatus'] = $this->getParamsByName('productStatus');
+        }
+        if (!empty( $this->getParamsByName('categoryId'))){
+            $queryCondition['categoryId'] = $this->getParamsByName('categoryId');
         }
         $limit['page'] = $this->getParamsByName('page')??1;
         $limit['size'] = $this->getParamsByName('size')??10;

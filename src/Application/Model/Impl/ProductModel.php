@@ -16,6 +16,7 @@ class ProductModel extends BaseModel implements ProductModelInterface
   public function __construct(PDO $conn, Medoo $medoo)
   {
       parent::__construct($conn, $medoo);
+      $this->medoo = $medoo;
       $this->tableName = 'shop_product';
   }
 
@@ -45,7 +46,7 @@ class ProductModel extends BaseModel implements ProductModelInterface
         return $this->medoo->count($this->tableName,$where);
     }
 
-    public function findProduct(array $queryCondition, array $select = [],array $limit = [0,10]): array
+    public function findProduct(array $queryCondition, array $select = [],array $limit = []): array
     {
 
 
@@ -57,7 +58,9 @@ class ProductModel extends BaseModel implements ProductModelInterface
         if (!empty($queryCondition)){
             $where = $this->buildQueryCondition($queryCondition);
         }
-        $where['LIMIT'] = $limit;
+        if (!empty($limit)){
+            $where['LIMIT'] = $limit;
+        }
         return $this->medoo->select($this->tableName, $select,$where);
     }
 
@@ -65,6 +68,8 @@ class ProductModel extends BaseModel implements ProductModelInterface
     {
         return $this->deleteIds($ids);
     }
+
+
 
     public function updateProduct(Product $product): bool
     {
@@ -123,5 +128,10 @@ class ProductModel extends BaseModel implements ProductModelInterface
             }
         }
         return $where;
+    }
+
+    public function updateProductBatch(array $product): bool
+    {
+        return  false;
     }
 }

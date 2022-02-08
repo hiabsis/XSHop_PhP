@@ -63,7 +63,7 @@ interface RoleModelInterface extends BaseModelInterface
      * @param array $saveData
      * @return bool
      */
-    public function saveRole(array $saveData):bool;
+    public function saveRole(array $saveData):int;
 
     /**
      * Role: 无畏泰坦

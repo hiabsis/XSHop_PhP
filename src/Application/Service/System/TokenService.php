@@ -64,7 +64,7 @@ class TokenService extends BaseService implements TokenServiceInterface
         $userInfo = $this->userModel->getCacheUserInfo($token);
 
         if (empty($userInfo) || count($userInfo) === 1){
-            throw  new CommonException(errorInfo: ErrorEnum::$ERROR_20011);
+            throw  new CommonException(errorInfo: ErrorEnum::$ERROR_20002);
         }
         $userInfo['permissions'] = json_decode($userInfo['permissions'], true, 512, JSON_THROW_ON_ERROR);
         $userInfo['menus'] = json_decode($userInfo['menus'], false, 512, JSON_THROW_ON_ERROR);
@@ -110,7 +110,7 @@ class TokenService extends BaseService implements TokenServiceInterface
         } else if ($api['type'] === SystemConstants::$API_TYPE_NOT_EXITS){
             throw new CommonException(errorInfo: ErrorEnum::$ERROR_410);
         } else if ($api['type'] === SystemConstants::$API_TYPE_PERMISSON && empty($token)){
-            throw  new CommonException(errorInfo: ErrorEnum::$ERROR_20011);
+            throw  new CommonException(errorInfo: ErrorEnum::$ERROR_20002);
         }
         $userInfo = $this->getUserInfo($token);
 
@@ -142,10 +142,11 @@ class TokenService extends BaseService implements TokenServiceInterface
         $api  = $this->apiModel->getCacheApi($uri);
         //
         if ( $api['type'] === SystemConstants::$API_TYPE_NOT_EXITS){
+
             throw  new CommonException(errorInfo: ErrorEnum::$ERROR_410);
         }
         if (empty($api)  ){
-            $api = $this->apiModel->getApi(select: ['path','permission','status','type'],queryCondition: ['path'=>$uri,'status' => SystemConstants::$API_STATUS_COMMON]);
+            $api = $this->apiModel->getApi(select: ['path','permission','status','type'],queryCondition: ['path'=>$uri,'status' => SystemConstants::$API_STATUS_OPENING]);
             if (empty($api)){
                 $cache = ['type'=>SystemConstants::$API_TYPE_NOT_EXITS];
                 throw  new CommonException(errorInfo: ErrorEnum::$ERROR_410);

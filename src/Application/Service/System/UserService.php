@@ -266,7 +266,7 @@ class UserService extends  BaseService implements UserServiceInterface
     {
 
         if (empty($currentUserId)){
-            throw  new CommonException(errorInfo: ErrorEnum::$ERROR_20011);
+            throw  new CommonException(errorInfo: ErrorEnum::$ERROR_20002);
         }
         // 获得当前用户对应的所有角色的 id 列表
         $userRoles = $this->userRoleModel->findUserRole(select: ['role_id'], queryCondition: ['user_id'=>$currentUserId]);
@@ -313,6 +313,7 @@ class UserService extends  BaseService implements UserServiceInterface
         $res['user_id'] = $user['id'];
         $res['username'] = $user['username'];
         $res['nickname'] = $user['nickname'];
+        $res['score'] = $user['score'];
 
         // 获得当前用户对应的所有角色的 id 列表
         $userRoles = $this->userRoleModel->findUserRole(select: ['role_id'], queryCondition: ['user_id'=>$userId]);

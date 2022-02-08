@@ -33,6 +33,7 @@ interface ProductModelInterface extends BaseModelInterface
 
     public function removeProductByIds(array $ids):bool;
     public function updateProduct(Product $product):bool;
+    public function updateProductBatch(array $product):bool;
     public function saveProduct(Product $product):int;
 
     /**

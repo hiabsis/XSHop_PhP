@@ -89,6 +89,7 @@ class ErrorHandler extends SlimErrorHandler
         $encodedPayload = json_encode($errorInfo, JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE);
         $response = $this->responseFactory->createResponse($status);
         $response->getBody()->write($encodedPayload);
+
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 

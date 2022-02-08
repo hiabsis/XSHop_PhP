@@ -17,5 +17,8 @@ return function (\DI\ContainerBuilder $containerBuilder) {
         \Application\Model\UserRoleModelInterface::class =>  \DI\autowire(\Application\Model\Impl\UserRoleModel::class),
         \Application\Model\ApiMenuModelInterface::class =>  \DI\autowire(\Application\Model\Impl\ApiMenuModel::class),
         \Application\Model\ApiModelInterface::class =>  \DI\autowire(\Application\Model\Impl\ApiModel::class),
+        \Application\Model\CollectionModelInterface::class =>  \DI\autowire(\Application\Model\Impl\CollectionModel::class),
+        \Application\Model\CartModelInterface::class =>  \DI\autowire(\Application\Model\Impl\CartModel::class),
+        \Application\Model\OrderModel::class =>  \DI\autowire(\Application\Model\Impl\OrderModel::class),
        ]);
 };

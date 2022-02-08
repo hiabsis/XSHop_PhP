@@ -9,6 +9,12 @@ use Application\Domain\Product\ProductInfo;
 use Application\Domain\Product\ProductRelatedResource;
 use Application\Domain\System\Resource;
 use Application\Domain\System\User;
+use  Application\Controller\UserApi\CollectionController;
+use Application\Controller\UserApi\CartController;
+use Application\Controller\UserApi\OrderController;
+use Application\Controller\UserApi\LoginController;
+use Application\Controller\System\{FileUploadController};
+use Application\Controller\System\MenuController;
 
 return function (\DI\ContainerBuilder $containerBuilder) {
 
@@ -36,15 +42,15 @@ return function (\DI\ContainerBuilder $containerBuilder) {
                 //校验规则
                 'validator' => [
 
-                    \Application\Controller\UserApi\LoginController::class . ':login' => [
+                    LoginController::class . ':login' => [
                         'username' => 'present|string|length_max:64',
                         'password' => 'present|string|length_max:64'
                     ],
-                    \Application\Controller\UserApi\LoginController::class . ':authLogin' => [
+                    LoginController::class . ':authLogin' => [
                         'username' => 'present|string|length_max:64',
                         'password' => 'present|string|length_max:64'
                     ],
-                    \Application\Controller\UserApi\LoginController::class . ':register' => [
+                    LoginController::class . ':register' => [
                         'username' => 'present|string|length_max:64',
                         'password' => 'present|string|length_max:64'
                     ],
@@ -107,11 +113,11 @@ return function (\DI\ContainerBuilder $containerBuilder) {
                         'productName' => 'string|length_max:32',
                         'categoryId' => 'string|length_max:11|to_type:integer'
                     ],
-                    \Application\Controller\System\FileUploadController::class . ":getImgAccessPath" => [
+                     FileUploadController::class . ":getImgAccessPath" => [
                         'id' => 'to_type:integer|integer_str|to_type:integer',
                         'type' => 'to_type:integer|integer_str|to_type:integer',
                     ],
-                    \Application\Controller\System\MenuController::class . ":saveMenu" => [
+                     MenuController::class . ":saveMenu" => [
                         'path' => 'present|length_max:128|string',
                         'name' => 'present|length_max:64|string',
                         'component' => 'filled|length_max:64|string',
@@ -119,7 +125,7 @@ return function (\DI\ContainerBuilder $containerBuilder) {
                         'name_zh' => 'present|length_max:64|string',
                         'icon' => 'filled|length_max:64|string',
                     ],
-                    \Application\Controller\System\MenuController::class . ":updateMenu" => [
+                     MenuController::class . ":updateMenu" => [
                         'path' => 'present|length_max:128|string',
                         'name' => 'present|length_max:64|string',
                         'id' => 'present|length_max:11|integer',
@@ -128,16 +134,16 @@ return function (\DI\ContainerBuilder $containerBuilder) {
                         'name_zh' => 'present|length_max:64|string',
                         'icon' => 'filled|length_max:64|string',
                     ],
-                    \Application\Controller\System\MenuController::class.":loadMenuByPage" =>[
+                     MenuController::class.":loadMenuByPage" =>[
                         'page' => 'filled|string|to_type:integer|min:1',
                         'size' => 'filled|string|to_type:integer|max:100|min:2',
                     ],
-                    \Application\Controller\System\MenuController::class.":searchMenuByPage" =>[
+                     MenuController::class.":searchMenuByPage" =>[
                         'data' => 'filled|length_max:64|string',
                         'page' => 'present|string|to_type:integer|min:1',
                         'size' => 'present|string|to_type:integer|max:100|min:2',
                     ],
-                    \Application\Controller\System\MenuController::class.":removeMenu" =>[
+                     MenuController::class.":removeMenu" =>[
                       'ids' => 'present|array'
                     ],
                     \Application\Controller\UserApi\LoginController::class.":login"=>[
@@ -225,6 +231,44 @@ return function (\DI\ContainerBuilder $containerBuilder) {
                     ApiController::class.":removeRole" =>[
                         'ids' => 'present|array'
                     ],
+                    CollectionController::class .':saveCollection' =>[
+                        'user_id' => 'present|length_max:11|to_type:integer',
+                        'product_id' =>  'present|integer|length_max:11|to_type:integer'
+                    ],
+                    CollectionController::class .':listCollection' =>[
+                        'user_id' => 'present|length_max:11|to_type:integer',
+                        'page' => 'filled|string|to_type:integer|min:1',
+                        'size' => 'filled|string|to_type:integer|max:100|min:2',
+                    ],
+                    CollectionController::class .':removeCollection' =>[
+                        'user_id' => 'present|length_max:11|to_type:integer',
+                        'collect_id' =>  'present|length_max:11'
+                    ],
+                    CartController::class .':saveCart' =>[
+                        'user_id' => 'present|length_max:11|to_type:integer',
+                        'product_id' =>  'present|integer|length_max:11|to_type:integer'
+                    ],
+                    CartController::class .':listCart' =>[
+                        'user_id' => 'present|length_max:11|to_type:integer',
+                        'page' => 'filled|string|to_type:integer|min:1',
+                        'size' => 'filled|string|to_type:integer|max:100|min:2',
+                    ],
+                    CartController::class .':removeCart' =>[
+                        'user_id' => 'present|length_max:11|to_type:integer',
+                        'cart_id' =>  'present|length_max:11'
+                    ],
+                    CartController::class .':updateCart' =>[
+                        'user_id' => 'present|length_max:11|to_type:integer',
+                        'cart_id' =>  'present|length_max:11'
+                    ],
+                    OrderController::class.':saveOrder' => [
+                        'user_id' => 'present|length_max:11|to_type:integer',
+                        'products' =>  'present|array',
+                        'address_id' => 'present|length_max:11|to_type:integer',
+                    ],
+                    OrderController::class.':pageOrder' => [
+                        'user_id' => 'present|length_max:11|to_type:integer',
+                    ]
 
 
 
