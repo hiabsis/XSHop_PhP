@@ -127,9 +127,12 @@ class ProductController extends BaseController
     /**
      * 获取最新商品
      */
-    public function newestProduct($request, $response, $args)
+    public function newestProduct($request, $response, $args):Response
     {
         $this->hasAllRequiredParams($request, 'newestProduct');
+
+        return  $response;
+
     }
 
     /**
@@ -138,10 +141,15 @@ class ProductController extends BaseController
      * @param $response
      * @param $args
      * @return mixed
+     * @throws JsonException
      */
-    public function hotProduct($request, $response, $args)
+    public function hotProduct($request, $response, $args):Response
     {
         $this->hasAllRequiredParams($request, 'hotProduct');
+        $page = $this->getParamsByName('page')??1;
+        $size = $this->getParamsByName('size')??10;
+        $res = $this->productService->listProductByHot($page-1,$size*($page));
+        return $this->respondWithJson(Result::SUCCESS($res), $response);
     }
 
     protected function validator(Request $request, array $rules = null)
@@ -181,7 +189,7 @@ class ProductController extends BaseController
      */
     public function listProductCarousel(Request $request, Response $response, array $args):Response
     {
-        $res = $this->productService->listProductCarousel();
+        $res = $this->productService->getBannerProduct();
 
         return $this->respondWithJson(Result::SUCCESS($res), $response);
     }

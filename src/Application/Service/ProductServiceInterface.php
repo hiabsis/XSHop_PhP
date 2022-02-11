@@ -57,13 +57,7 @@ interface ProductServiceInterface
      */
     public function listProductByHot(int $start,int $end):array;
 
-    /**
-     * User: 无畏泰坦
-     * Date: 2021.12.22 15:06
-     * Describe 获取商品的轮播信息
-     * @return array  [ [productId : id , imgUrl :imgAccessPatch]]
-     */
-    public function listProductCarousel() : array;
+
 
     /**
      * User: 无畏泰坦
@@ -85,14 +79,7 @@ interface ProductServiceInterface
      */
     public function getBannerProduct() : array;
 
-    /**
-     * User: 无畏泰坦
-     * Date: 2021.12.29 14:38
-     * Describe  获取热门商品
-     * @param int $productType 商品状态 1，2，3
-     * @return array
-     */
-    public function getHotProduct(int $productType = 0) : array;
+
 
 
 }

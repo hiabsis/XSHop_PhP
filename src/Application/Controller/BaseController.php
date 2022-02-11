@@ -68,9 +68,9 @@ abstract class BaseController
      */
     protected function hasAllRequiredParams(Request $request, string $method){
         // 授权认证
-        if (!$this->authentication($request)){
-            throw new CommonException(errorInfo: ErrorEnum::$ERROR_502);
-        }
+//        if (!$this->authentication($request)){
+//            throw new CommonException(errorInfo: ErrorEnum::$ERROR_502);
+//        }
         $this->request = $request;
         $data = [];
 //        $valu =$_SERVER['HTTP_X_FORWARDED_FOR'];

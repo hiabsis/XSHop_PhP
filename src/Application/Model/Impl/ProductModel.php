@@ -86,12 +86,10 @@ class ProductModel extends BaseModel implements ProductModelInterface
 
     public function listProductByIds(array $ids): array
     {
-        $condition = [
-            'clazz' => Product::class,
-            'in' => ' id in ',
-            'binds' => $ids
+        $where = [
+            'id' => $ids
         ];
-        return $this->findByCondition();
+        return  $this->medoo->select($this->tableName,['id','name','price'],$where);
     }
 
     /**

@@ -122,7 +122,11 @@ class OrderService extends BaseService implements OrderServiceInterface
            if (empty($product)){
                throw new CommonException(errorInfo: ErrorEnum::$ERROR_40002);
            }
-           $totalScore += $product->price * $item['checkNum'];
+            if ($product->number <=0){
+                throw new CommonException(errorInfo: ErrorEnum::$ERROR_40003);
+            }
+
+            $totalScore += $product->price * $item['checkNum'];
            // 库存不足
            if ($product->price < $item['checkNum']){
                throw new CommonException(errorInfo: ErrorEnum::$ERROR_40003);
@@ -138,7 +142,7 @@ class OrderService extends BaseService implements OrderServiceInterface
             $p =  new Product();
            $p->id = $product->id;
            $p->number = $product->number - $item['checkNum'];
-           $updateProducts[] = $p;
+                   $updateProducts[] = $p;
         }
         // 检查积分
         if ($user['score'] < $totalScore){

@@ -6,6 +6,7 @@ use Application\Constant\ModelConstants;
 use Application\Exception\MysqlSaveException;
 use Medoo\Medoo;
 use PDO;
+use function DI\value;
 
 /**
  * User: 无畏泰坦
@@ -173,7 +174,11 @@ abstract class BaseModel
         $binds = [];
         foreach ($obj as $k => $v) {
             $key = $this->toUnderScore($k);
-            if (!empty(trim($v)) && $key !== 'id' && in_array($key, $tableColumns, true)) {
+            if ($v === 0){
+                $set[] = " `$key`  = ? ";
+                $binds[] = $v;
+            }
+            else if (!empty(trim($v)) && $key !== 'id' && in_array($key, $tableColumns, true)) {
                 $set[] = " `$key`  = ? ";
                 $binds[] = $v;
             }

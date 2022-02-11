@@ -65,12 +65,22 @@ class CartService extends  BaseService implements CartServiceInterface
 
         if (!empty($carts)){
             foreach ($carts as &$cart){
-                $product = $this->productModel->getProductById($cart['product_id']);
-                $product->file_path = $this->productService->getProductShowImgAccessPath($product->id);
-                $product->cartId= $cart['id'];
-                $product->cartNumber= $cart['number'];
-                $cartProduct[] = $product;
-                $product->check = $cart['check'] === 1;
+                try {
+                    $product = $this->productModel->getProductById($cart['product_id']);
+                    $product->file_path = $this->productService->getProductShowImgAccessPath($product->id);
+                    $product->cartId= $cart['id'];
+                    $product->cartNumber= $cart['number'];
+                    $cartProduct[] = $product;
+                    $product->check = $cart['check'] === 1;
+                }catch (\Exception $exception){
+                    $product = new Product();
+                    $product->file_path = "#";
+                    $product->cartId= $cart['id'];
+                    $product->cartNumber= 0;
+                    $cartProduct[] = $product;
+                    $product->check = $cart['check'] === 1;
+                }
+
             }
         }
         return ['total' => $total,'data' => $cartProduct];

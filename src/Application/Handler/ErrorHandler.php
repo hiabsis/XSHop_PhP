@@ -85,7 +85,7 @@ class ErrorHandler extends SlimErrorHandler
             $errorInfo = SystemErrorInfo::getErrorInfo($exception);
         }
 
-        $this->logger->error(json_encode($errorInfo, JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE));
+        $this->logger->error(json_encode($logInfo, JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE));
         $encodedPayload = json_encode($errorInfo, JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE);
         $response = $this->responseFactory->createResponse($status);
         $response->getBody()->write($encodedPayload);

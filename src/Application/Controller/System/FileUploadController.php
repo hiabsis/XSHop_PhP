@@ -26,6 +26,7 @@ class FileUploadController extends \Application\Controller\BaseController
    {
        parent::__construct($logger, $rule, $tokenService);
        $this->resourceService = $resourceService;
+       $this->class= self::class;
    }
 
 

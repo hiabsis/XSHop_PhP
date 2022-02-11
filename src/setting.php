@@ -15,6 +15,8 @@ use Application\Controller\UserApi\OrderController;
 use Application\Controller\UserApi\LoginController;
 use Application\Controller\System\{FileUploadController};
 use Application\Controller\System\MenuController;
+use Application\Controller\System\RoleController;
+use Application\Controller\System\UserController;
 
 return function (\DI\ContainerBuilder $containerBuilder) {
 
@@ -98,7 +100,7 @@ return function (\DI\ContainerBuilder $containerBuilder) {
                     ],
                     ProductController::class . ":putProduct" => [
                         'id' => 'present|integer|length_max:11',
-                        'status' => 'integer|length_max:2|in:2,1|to_type:integer',
+                        'status' => 'integer|length_max:2|in:0,1|to_type:integer',
                         'desc' => 'string|length_max:255',
                         'number' => 'integer|length_max:11',
                         'price' => 'float_str|to_type:scale:2',
@@ -146,54 +148,54 @@ return function (\DI\ContainerBuilder $containerBuilder) {
                      MenuController::class.":removeMenu" =>[
                       'ids' => 'present|array'
                     ],
-                    \Application\Controller\UserApi\LoginController::class.":login"=>[
+                    LoginController::class.":login"=>[
                         'username' => 'present|length_max:64',
                         'password' => 'present|length_max:64'
                     ],
-                    \Application\Controller\System\UserController::class . ":saveUser" => [
+                    UserController::class . ":saveUser" => [
                         'username'=>'present|string|length_max:64',
                         'password'=>'present|string|length_max:64',
                     ],
-                    \Application\Controller\System\UserController::class . ":authLogin" => [
+                    UserController::class . ":authLogin" => [
                         'username'=>'present|string|length_max:64',
                         'password'=>'present|string|length_max:64',
                     ],
-                    \Application\Controller\System\UserController::class . ":editorUserStatus" => [
+                    UserController::class . ":editorUserStatus" => [
                         'id'=>'present|integer|length_max:64',
                         'enabled'=>'present|boolean|length_max:64|to_type:boolean',
                     ],
 
-                    \Application\Controller\System\UserController::class . ":updateUser" => [
+                   UserController::class . ":updateUser" => [
                         'username'=>'filled|string|length_max:64',
                         'password'=>'filled|string|length_max:64',
                         'id'=>'present|integer|length_max:11|min:1',
                         'roleIds'=>'filled|array',
                     ],
-                    \Application\Controller\System\UserController::class.":loadUserByPage" =>[
+                   UserController::class.":loadUserByPage" =>[
                         'username'=>'filled|string|length_max:64',
                         'page' => 'filled|string|to_type:integer|min:1',
                         'size' => 'filled|string|to_type:integer|max:100|min:2',
                     ],
-                    \Application\Controller\System\UserController::class.":searchUserByPage" =>[
+                   UserController::class.":searchUserByPage" =>[
                         'data' => 'filled|length_max:64|string',
                         'page' => 'present|string|to_type:integer|min:1',
                         'size' => 'present|string|to_type:integer|max:100|min:2',
                     ],
-                    \Application\Controller\System\UserController::class.":removeUser" =>[
+                   UserController::class.":removeUser" =>[
                         'ids' => 'present|array'
                     ],
-                    \Application\Controller\System\RoleController::class . ":saveRole" => [
+                    RoleController::class . ":saveRole" => [
                         'name'=>'present|string|length_max:64',
                         'status'=>'present|integer|length_max:1|min:1',
                         'desc'=>'filled|string|length_max:64',
                     ],
-                    \Application\Controller\System\RoleController::class . ":updateRole" => [
+                    RoleController::class . ":updateRole" => [
                         'name'=>'present|string|length_max:64',
                         'enabled'=>'filled|boolean|length_max:1',
                         'desc'=>'filled|string|length_max:64',
                         'id' => 'present|integer|length_max:11|min:1',
                     ],
-                    \Application\Controller\System\RoleController::class.":loadRoleByPage" =>[
+                    RoleController::class.":loadRoleByPage" =>[
                         'id' => 'filled|integer|length_max:11|min:1',
                         'name'=>'filled|string|length_max:64',
                         'status'=>'filled|integer|length_max:1|in:1,0',
@@ -228,7 +230,7 @@ return function (\DI\ContainerBuilder $containerBuilder) {
                         'page' => 'filled|string|to_type:integer|min:1',
                         'size' => 'filled|string|to_type:integer|max:100|min:2',
                     ],
-                    ApiController::class.":removeRole" =>[
+                    RoleController::class.":removeRole" =>[
                         'ids' => 'present|array'
                     ],
                     CollectionController::class .':saveCollection' =>[
@@ -268,6 +270,10 @@ return function (\DI\ContainerBuilder $containerBuilder) {
                     ],
                     OrderController::class.':pageOrder' => [
                         'user_id' => 'present|length_max:11|to_type:integer',
+                    ],
+                    ProductController::class.":hotProduct" => [
+                        'page' => 'present|length_max:11|to_type:integer',
+                        'size' => 'present|length_max:11|to_type:integer',
                     ]
 
 

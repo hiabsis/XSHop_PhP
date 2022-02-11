@@ -95,6 +95,7 @@ class MenuController extends BaseController
         return $this->respondWithJson(Result::SUCCESS(), $response);
     }
 
+
     /**
      * User: 无畏泰坦
      * Date: 2022.01.06 10:27
@@ -158,6 +159,9 @@ class MenuController extends BaseController
         }
         if ($this->getParamsByName('name_zh') !== null) {
             $menu['name_zh'] = $this->getParamsByName('name_zh');
+        }
+        if ($this->getParamsByName('status') !== null) {
+            $menu['status'] = $this->getParamsByName('status')?1:0;
         }
 
         return $menu;

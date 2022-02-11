@@ -38,6 +38,8 @@ return static function (\Slim\App $app) {
         $group->post('/order/add', OrderController::class . ":saveOrder");
         // 订单-查询
         $group->get('/order/page', OrderController::class . ":pageOrder");
+        // 热门商品
+        $group->get('/product/hot', ProductController::class . ":hotProduct");
 
     });
     // 后台管理系统

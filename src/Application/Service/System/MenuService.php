@@ -51,8 +51,14 @@ class MenuService extends BaseService implements MenuServiceInterface
      */
     public function listMenuByPage(int $page=-1,int $size = -1):TreeVO
     {
+        // 获取所有的菜单
         $allMenu = $this->menuModel->findMenu();
         foreach ($allMenu as &$menu){
+            if ($menu['status'] === 1){
+                $menu['status'] = true;
+            }else{
+                $menu['status'] = false;
+            }
             $apiMenus = $this->apiMenuModel->findApiMenu(select: ['api_id'],queryCondition: ['menu_id'=>$menu['id']]);
             $menu['permission'] = [];
             if (!empty($apiMenus)){

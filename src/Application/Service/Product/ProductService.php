@@ -20,10 +20,11 @@ use Application\Model\ProductModelInterface;
 use Application\Model\ProductRelatedResourceModelInterface;
 
 use Application\Model\ResourceModelInterface;
+use Application\Service\BaseService;
 use Exception;
 use JetBrains\PhpStorm\ArrayShape;
 
-class ProductService implements \Application\Service\ProductServiceInterface
+class ProductService  extends  BaseService implements \Application\Service\ProductServiceInterface
 {
     /**
      * @var ProductModelInterface
@@ -76,6 +77,14 @@ class ProductService implements \Application\Service\ProductServiceInterface
                     $this->productInfoModel->updateProductInfo($info);
                 }
             }
+            // 删除最初的静态资源
+            $this->productRelatedResourceModel->removeProductRelatedResourceByProductId($product->id);
+            foreach ($resources as  &$resource){
+                $resource->productId = $product->id;
+
+            }
+            $this->productRelatedResourceModel->saveProductRelatedResourceBatch($resources);
+            // 更新商品静态资源
 
             // 事务提交
             $this->productModel->commit();
@@ -101,30 +110,34 @@ class ProductService implements \Application\Service\ProductServiceInterface
     public function saveProductDetail(Product $product, array $resources, array $productInfo): bool
     {
         // 开启事务
-        $this->productModel->startTransactional();
-        try {
-            // 获取商品信息
-            $productId = $this->productModel->saveProduct($product);
 
-            // 填充商品Id
-            foreach ($productInfo as &$info) {
-                $info->productId = $productId;
-            }
-            foreach ($resources as &$resource) {
-                $resource->productId = $productId;
-            }
-            // 保存商品详情
-            $this->productInfoModel->saveProductInfoBatch($productInfo);
-            // 保存商品资源信息
-            $this->productRelatedResourceModel->saveProductRelatedResourceBatch($resources);
-            // 事务提交
-            $this->productModel->commit();
 
-        } catch (Exception $e) {
-            // 事务回滚
-            $this->productModel->rollback();
-            throw  $e;
-        }
+            $this->productModel->startTransactional();
+            try {
+                // 获取商品信息
+                $productId = $this->productModel->saveProduct($product);
+
+                // 填充商品Id
+                foreach ($productInfo as &$info) {
+                    $info->productId = $productId;
+                }
+                foreach ($resources as &$resource) {
+                    $resource->productId = $productId;
+                }
+                // 保存商品详情
+                $this->productInfoModel->saveProductInfoBatch($productInfo);
+                // 保存商品资源信息
+                $this->productRelatedResourceModel->saveProductRelatedResourceBatch($resources);
+                // 事务提交
+                $this->productModel->commit();
+
+            } catch (Exception $e) {
+                // 事务回滚
+                $this->productModel->rollback();
+                throw  $e;
+            }
+
+
         return true;
     }
 
@@ -149,7 +162,7 @@ class ProductService implements \Application\Service\ProductServiceInterface
         // 获取商品参数信息
         $productInfo = $this->productInfoModel->listProductInfoByProductId($product->id);
         // 获取商品图片 访问路径
-        $resources =  $this->getImageAccessPath($product);
+        $resources =  $this->getImageAccessPath($product, ProductConstants::$PRODUCT_IMAGE_TYPE_DETAIL);
         // 属性转换
         /**
          * @var $product array
@@ -161,6 +174,7 @@ class ProductService implements \Application\Service\ProductServiceInterface
         $product['category_name'] = $category['categoryName'];
         $product['url'] = $resources;
         $product['info'] = $productInfo;
+        // 记录商品的点击记录
         $this->recordProductClick($productId);
         return $product;
     }
@@ -247,20 +261,29 @@ class ProductService implements \Application\Service\ProductServiceInterface
         // 获取最热商品的ID
         $hotProductIds = $this->getMHotProductIdsByUserClick($start, $end);
         // 获取商品信息
+        if (empty($hotProductIds)){
+            return [];
+        }
         $products = $this->productModel->listProductByIds($hotProductIds);
         // 获取商品的相关信息
         foreach ($products as &$product) {
-            // 获取商品标签
             // 获取商品展示图
+            $image = $this->getImageAccessPath(ClassHelper::newInstance($product,Product::class),ProductConstants::$PRODUCT_BANNE_IMAGE_TYPE);
+            if (empty($image)){
+                $product['file_path']= "#";
+            }else{
+                $product['file_path']=$image[0];
+            }
         }
 
         // 数据的格式化
-        return [];
+        return $products ;
     }
 
-    public function getImageAccessPath(Product $product):array
+    public function getImageAccessPath(Product $product,int $imgType = 0 ):array
     {
         $images = [];
+
         $resources =  $this->productRelatedResourceModel->findProductResourceByProductIdAndType($product->id, ProductConstants::$PRODUCT_IMAGE_TYPE_DETAIL);
         /**
          * @var $resource Resource
@@ -271,30 +294,7 @@ class ProductService implements \Application\Service\ProductServiceInterface
         return  $images;
     }
 
-    /**
-     * User: 无畏泰坦
-     * Date: 2021.12.22 15:06
-     * Describe 获取商品的轮播信息
-     * @return array  [ [productId : id , imgUrl :imgAccessPatch]]
-     */
-    public function listProductCarousel(): array
-    {
 
-        // 返回的数据
-        $res = [];
-//        // 从商品资源关联表中获取轮播商品信息 只要返回四条数据就可以了
-//        $relations = $this->getBannerProductIds();
-//        /*** @var $relation ProductRelatedResource */
-//        foreach ($relations as $relation) {
-//            // 获取商品的图片信息
-//            $temp = [];
-//            $temp['productId'] = $relation->productId;
-//            $accessPath = $this->getProductImgAccessPath($relation->id);
-//            $temp['imgUrl'] = $accessPath;
-//            $res[] = $temp;
-//        }
-        return $res;
-    }
 
     /**
      *
@@ -314,8 +314,9 @@ class ProductService implements \Application\Service\ProductServiceInterface
         $res = [];
         // 查询总数
         $total = $this->productModel->countProduct($queryCondition);
+        $pageParams = $this->getPageParams($limit,$total);
         // 查询数据
-        $products  = $this->productModel->findProduct(queryCondition:$queryCondition,select: ['id','name','category_id','price','number','status'],limit: $limit);
+        $products  = $this->productModel->findProduct(queryCondition:$queryCondition,select: ['id','name','category_id','price','number','status'],limit: $pageParams);
         foreach ($products as &$item){
             $item['file_path'] =$this->getProductShowImgAccessPath($item['id']);
             $item['category_name'] = $this->getProductCategoryName($item['category_id']);
@@ -386,6 +387,8 @@ class ProductService implements \Application\Service\ProductServiceInterface
      */
     private function getBannerProductInfo(): array
     {
+        // 在资源列表中 获取资源类型为轮播图
+        //
         $productInfo =  $this->productRelatedResourceModel->listProductRelatedResource(resourceType: ProductConstants::$PRODUCT_BANNE_IMAGE_TYPE,
                                                                                         select:['product_id','resource_id'], page: 1,size: 4);
         $resourceIds = array_column($productInfo,'resourceId');
@@ -408,9 +411,6 @@ class ProductService implements \Application\Service\ProductServiceInterface
         return empty($resource->url) ? "#" : SystemConstants::$FILE_ACCESS_PATH_PREFIX.$resource->url;
     }
 
-    public function getHotProduct(int $productType = 0): array
-    {
-        return [];
-    }
+
 
 }

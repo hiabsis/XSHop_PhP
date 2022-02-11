@@ -47,6 +47,7 @@ class SystemErrorInfo
         ],
         ValidatorRulesNotFoundException::class =>[
             'code' => self::ERROR_CODE_VALIDATOR_RULES_NOT_FOUND_EXCEPTION,
+            'msg' => "校验规则未找到",
         ],
         PDOException::class => [
             'code' => self::ERROR_CODE_PDO_EXCEPTION,
